@@ -1,0 +1,100 @@
+extends layout
+
+block content
+	div(ng-app="dashboard", i18n-locale=i18n.getLocale(), ng-controller="DashBoardController")
+		include ./tools/notification.jade
+		include ./tools/loading-page.jade
+		include ./invoices/paymentForm.jade
+		include ./dashboard/checkOutConf.jade
+		if (session.rights && session.rights.client_can_add)
+			include clientForm.jade
+			
+		ul(id="dashboardmenu", class="nav nav-pills")
+			li(ng-class="{active: board_selected == 'A'}", ng-click="board_selected = 'A'")
+				a(href) #{__("Arrivals")}
+			li(ng-class="{active: board_selected == 'D'}", ng-click="board_selected = 'D'")
+				a(href) #{__("Departures")}
+			li(ng-class="{active: board_selected == 'C'}", ng-click="board_selected = 'C'")
+				a(href) #{__("Current Customers")}
+		div(class="clearfix")
+		div(id="checkedin", ng-show="board_selected == 'C'")			
+			div(ng-repeat="res in checkedIn" class="client_checked section")
+				div(class="reservation-details pull-left", ng-init="getClientInvoices(res.client._id)")
+					p
+						b #{__("Room Number")}: 
+						span {{res.room.room_number}}
+					p
+						b #{__("Room Name")}: 
+						span {{res.room.room_name}}
+					p
+						b #{__("Client name")}: 
+						span {{res.client.full_name}}
+					p
+						b #{__("Expected departure time")}: 
+						span(departure-time-from-now="res.end")
+					
+					button(class="btn btn-lg btn-default" ng-click="startGlobalInvoice(res.client, res.room._id)") #{__("Create Invoice")}
+					button(ng-show="amount_due[res.client._id]" class="btn btn-lg btn-primary", ng-click="startGlobalPayment(res.client)") #{__("Pay")}
+					button(ng-hide="amount_due[res.client._id]" class="btn btn-lg btn-primary", ng-click="confirmCheckOut(res)") #{__("Check out")}
+					
+				div(class="pull-right")
+					h3 #{__("Reservation details")}
+					table(class="table table-bordered")
+						thead
+							tr
+								td #{__("Reservation ID")}
+								td #{__("Date begin")}
+								td #{__("Date end")}
+								td #{__("Length of stay")}
+								td #{__("Total")}
+								td #{__("Amount paid")}
+								td #{__("Amount due")}
+								td
+						tr
+							td: a(href, print-reservation='res._id', language='session.user_language || default_language._id', currency='default_currency._id') {{res._id}}
+							td(display-date="res.begin")
+							td(display-date="res.end")
+							td {{res.nights}} #{__("nights")}
+							td(class="price") {{res.total_price | number:2}} {{default_currency.symbol}}
+							td(class="price") {{res.amount_paid | number:2}} {{default_currency.symbol}}
+							td(class="price") {{res.amount_due | number:2}} {{default_currency.symbol}}
+							td: button(class="btn btn-primary", ng-click="startAnyPayment(res, 'reservation')", ng-show="res.amount_due > 0") #{__("Pay")}
+					
+					div(ng-init="getRoomGlobalInvoices(res.room._id)", ng-show="roomInvoices[res.room._id].length > 0")
+						h3 #{__("Global Invoices")}
+						table(class="table table-bordered", )
+							thead
+								tr
+									td #{__("Invoice ID")}
+									td #{__("Date")}
+									td #{__("Client")}
+									td #{__("Total")}
+									td
+							tr(ng-repeat="invoice in roomInvoices[res.room._id]")
+								td: a(href, print-document="invoice._id", doctype="'globalinvoice'", language='default_language._id', currency="default_currency._id") {{invoice._id}}
+								td(display-date="invoice.date")
+								td {{invoice.client.full_name}}
+								td(class="price") {{invoice.total | number:2}} {{default_currency.symbol}}
+								td: img(class='icon', src='/images/delete_icon.png' ng-click="removeGlobalInvoice(invoice)")
+					div(ng-if="res.client", class="invoices", fill-client-invoices, customer="res.client")
+				div(class="clearfix")
+			
+			//div(class="sidepanel", ng-if="openGlobInvoices && openGlobInvoices.length > 0")
+				//h4 #{__("There are invoices created but that hasn't been paid yet")}
+					//div(class="section", ng-repeat="invoice in openGlobInvoices")
+						//p(style="font-size:smaller") #{__("Invoice ID")} : 
+							//a(href, print-document="invoice._id", doctype="'globalinvoice'", language='default_language._id', currency="default_currency._id") {{invoice._id}}
+						//p(class="price") {{invoice.net | number:2}} {{default_currency.symbol}}
+						//p(class="price") #{__("Remains to be paid")} : {{invoice.amount_due | number:2}} {{default_currency.symbol}}
+						//button(class="btn btn-danger" ng-hide="['blocked', 'paid'].indexOf(invoice.status) >= 0", ng-click="removeGlobalInvoice(invoice)") #{__("Cancel this invoice")}
+						//button(class="btn btn-primary" ng-hide="invoice.amount_due <= 0", ng-click="launchPayment(invoice)") #{__("Pay")}
+						//div(ng-if="invoice.amount_due <= 0")
+							//p #{__("You can now proceed to check out and free the room(s)")} :
+							//button(class="btn btn-default" ng-click="checkOut(invoice)") #{__("Check out")}
+		include ./dashboard/arrivals.jade
+		include ./dashboard/departures.jade
+		
+		include ./invoices/globalInvoiceForm.jade
+		include ./invoices/globalPaymentForm.jade
+		
+	script(type="text/javascript", src='/javascripts/controllers/dashboard.js')

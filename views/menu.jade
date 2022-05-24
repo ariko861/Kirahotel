@@ -1,0 +1,54 @@
+div(id='header')
+	
+	
+	ul(id='mainmenu')
+		if (session.rights)
+			li: a #{__("Dashboard")}
+				ul
+					if (session.rights.reservation_can_read_info || session.rights.is_superuser)
+						li: a(href='/') #{__("Reception")}
+					li: a(href='/sales') #{__("Sales")}
+					if (session.rights.calendar_has_access || session.rights.is_superuser)
+						li: a(href='/calendar') #{__('Calendar')}
+								
+			if (session.rights.client_can_read_info || session.rights.is_superuser)
+				li
+					a(href='/clients') #{__('Clients')}
+			if (session.rights.reservation_can_read_info || session.rights.is_superuser)
+				li: a(href='/reservations') #{__('Reservations')}
+			if (session.rights.room_can_read_info || session.rights.is_superuser)
+				li: a(href='/rooms') #{__('Rooms')}
+			if (session.rights.inventory_can_access || session.rights.is_superuser)
+				li: a(href='/products') #{__('Products')}
+			if (session.rights.is_superuser || session.rights.user_can_add)
+				li: a(href='/users') #{__('Users')}
+			if (session.rights.is_superuser || session.rights.configuration_can_change)
+				li
+					a(href='/config') #{__('Settings')}
+			if (session.rights.is_superuser || session.rights.statistics_can_read)
+				li: a(href='/statistics') #{__("Statistics")}
+			if (session.rights.is_superuser || session.rights.can_monitor)
+				li: a(href='/monitor') #{__("Monitor")}
+					
+		div(class="pull-right")
+			div(id='chooselang')
+				a(href='/setlocale/fr'): img(class='languageflag' src='/images/french_flag.png')
+				a(href='/setlocale/en'): img(class='languageflag' src='/images/english_flag.png')
+		
+	div(class="clearfix")
+	
+	img(id="mainlogo", src='/images/logo.jpg')
+	
+	
+	div(id="clock")
+		p(id="clocktime")
+		p(id="clockdate")
+	
+	div(id='userinfos')
+		if (session.logged)
+			p Welcome #{session.username}
+			a(href='/logout') #{__('Log out')}
+		else
+			a(href='/login') #{__('Log in')}
+	
+		

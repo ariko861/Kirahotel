@@ -1,0 +1,74 @@
+extends doc-layout
+
+block content
+	ul(class="pull-right")
+		li
+			span(class="header") #{__("Customer")}
+		li
+			span(class="header") #{__("First Name")} : 
+			span #{reservation.client.first_name}
+		li
+			span(class="header") #{__("Last Name")} : 
+			span #{reservation.client.last_name}
+		
+	div(class="clearfix")
+	
+	if (taxe)
+		- var colpan=3
+	else 
+		- var colpan=2
+	
+	table(class="table table-bordered")
+		thead
+			tr
+				td #{__("Room number")}
+				td #{__("Room name")}
+				td #{__("From")}
+				td #{__("To")}
+				td #{__("Nights")}
+			tr
+				td #{reservation.room.room_number}
+				td #{reservation.room.room_name}
+				td #{moment(reservation.begin).format('MMM DD, YYYY')}
+				td #{moment(reservation.end).format('MMM DD, YYYY')}
+				td #{reservation.nights}
+	table(class="table table-bordered")
+		thead
+			tr
+				td #{__("Number of nights")}
+				td #{__("Price per night")}
+				if ( taxe )
+					td #{taxe.translated_name}
+				td #{__("Total")}
+		tr
+			td #{reservation.default_price_nights}
+			td(class="price") #{sprintf('%.2f',reservation.room.default_price)} #{currency.symbol}
+			if ( taxe )
+				td #{sprintf('%.2f',( reservation.room.default_price*taxe.percentage / 100 ))} #{currency.symbol}
+			td(class="price") #{reservation.room.default_price * reservation.default_price_nights}
+		
+		if ( reservation.thisrates )
+			tr
+				td #{__("There were special rates during the period of your stay")}
+			
+			each rate in reservation.thisrates
+				tr
+					td #{rate.nights}
+					td(class="price") #{sprintf('%.2f', rate.price)} #{currency.symbol}
+					if ( taxe )
+						td #{sprintf('%.2f',( rate.price*taxe.percentage / 100 ))} #{currency.symbol}
+					td(class="price") #{rate.price * rate.nights} #{currency.symbol}
+		
+		if ( reservation.discount.amount )
+			tr
+				td(colspan='#{colpan}') #{__("Discount")} #{invoice.discount.percent} %
+				td(class="price") #{reservation.thisdiscount} #{currency.symbol}
+		
+		if ( taxe )
+			tr
+				td(colspan='#{colpan}') #{__("Taxe")} ( #{taxe.translated_name} )
+				td(class="price") #{reservation.thistotal*taxe.percentage / 100 } #{currency.symbol}
+		
+		tr
+			td(colspan='#{colpan}')
+			td(class="price") #{reservation.thistotal} #{currency.symbol}

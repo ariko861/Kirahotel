@@ -1,0 +1,56 @@
+extends doc-layout
+
+block content	
+	if invoice.client
+		ul(class="pull-right")
+			li
+				span(class="header") #{__("Customer")}
+			li
+				span(class="header") #{__("First Name")} : 
+				span #{invoice.client.first_name}
+			li
+				span(class="header") #{__("Last Name")} : 
+				span #{invoice.client.last_name}
+			
+		div(class="clearfix")
+		
+	if (taxe)
+		- var colpan=3
+	else 
+		- var colpan=2
+
+	table(class="table table-bordered")
+		thead
+			tr
+				td #{__("Quantity")}
+				td #{__("Designation")}
+				td #{__("Price")}
+				if (taxe)
+					td #{__("Taxe rate")}
+				td #{__("Total")}
+				
+		each item in invoice.items
+			tr
+				td #{item.quantity}
+				td #{item.thisdesignation}
+				td(class="price") #{item.thisprice} #{currency.symbol}
+				if (taxe)
+					td #{taxe.percentage} %
+				td(class="price") #{item.thisprice * item.quantity} #{currency.symbol}
+		if ( invoice.discount && invoice.discount.amount )
+			tr
+				td
+				td(colspan='#{colpan}') #{__("Discount")} #{invoice.discount.percent} %
+				td(class="price") #{invoice.thisdiscount} #{currency.symbol}
+		
+		tr
+			td
+			td(colspan='#{colpan}'): b #{__("Total")}
+			td(class="price") #{invoice.thistotal} #{currency.symbol}
+				
+		if (taxe)
+			tr
+				td
+				td(colspan='#{colpan}') #{__("Taxe ( included )")} #{taxe.percentage} %
+				td(class="price") #{invoice.thistotal*taxe.percentage / 100} #{currency.symbol}
+				

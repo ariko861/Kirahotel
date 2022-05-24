@@ -1,0 +1,678 @@
+@font-face {
+font-family: Caviar Dreams;
+src: url('../fonts/CaviarDreams.ttf');
+}
+
+@font-face {
+font-family: Caviar Dreams Bold;
+src: url('../fonts/CaviarDreams_Bold.ttf');
+}
+
+
+
+body {
+  padding:0px;
+  margin:0px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #FCBF24;
+}
+ul
+{
+list-style: none;
+}
+.nav
+{
+list-style:none;
+margin:15px;
+}
+.nav li
+{
+float:left;
+padding:7px;
+}
+.nav a
+{
+color:#947874;
+text-decoration:none;
+}
+.pull-right
+{
+float:right;
+}
+.pull-left
+{
+float:left;
+}
+.clearfix
+{
+clear:both;
+}
+.active
+{
+background-color: #947874;
+border-radius:15px;
+}
+.deleteon
+{
+cursor: crosshair;
+}
+.link
+{
+cursor:pointer;
+}
+.active a
+{
+color: white;
+}
+.icon
+{
+width:20px;
+cursor: pointer;
+}
+table
+{
+border-collapse:collapse;
+}
+.small-text
+{
+font-size:smaller;
+}
+#header
+{
+margin:0px;
+padding:0;
+height: 150px;
+overflow:hidden;
+border-bottom:solid lightgrey 1px;
+position:relative;
+}
+#header img
+{
+
+float:left;
+vertical-align:bottom;
+}
+#mainlogo
+{
+height:100px;
+position:absolute;
+bottom:5px;
+left:5px;
+}
+#header ul li
+{
+float:left;
+list-style:none;
+margin-right:10px;
+font-size: 18px;
+}
+#mainmenu
+{
+float:left;
+font-family: Caviar Dreams Bold;
+margin:0;
+padding:5px;
+
+width:100%;
+background-color: #000000;
+position:fixed;
+z-index:100;
+}
+#mainmenu li
+{
+position:relative;
+}
+#mainmenu li ul
+{
+display: none;
+position: absolute;
+top:100%;
+left:0;
+background-color: #000000;
+}
+#mainmenu li:hover>ul
+{
+display:initial;
+}
+#mainmenu li ul li
+{
+float:initial;
+margin:8px;
+}
+
+#mainmenu a
+{
+text-decoration:none;
+color: #FCBF24;
+}
+#mainmenu a:hover
+{
+text-shadow: #FCBF24 1px 1px 1px;
+text-decoration: underline;
+}
+
+.languageflag
+{
+width:24px;
+margin-right:10px;
+}
+#chooselang
+{
+float:right;
+}
+#userinfos
+{
+position:absolute;
+bottom:5px;
+right:5px;
+}
+#clock
+{
+position: absolute;
+left:0;
+right:0;
+margin-left:auto;
+margin-right:auto;
+top:55px;
+text-align:center;
+}
+#clocktime
+{
+font-weight:bold;
+font-size:23px;
+margin-bottom:0px;
+}
+#clockdate
+{
+font-style:italic;
+margin-top:0px;
+}
+
+.ng-invalid.ng-dirty {
+border-color: #FA787E;
+}
+
+.ng-valid.ng-dirty {
+border-color: #78FA89;
+}
+
+
+.clear, .clearfix
+{
+clear:both;
+}
+#calendar
+{
+width:95%;
+margin-bottom:20px;
+border-collapse:collapse;
+table-layout:fixed;
+}
+#calendar td
+{
+border: solid black 1px;
+text-align:center;
+}
+.calendar-body tr
+{
+height:80px;
+}
+.calendar-body th
+{
+width:150px;
+}
+.calendar-body td
+{
+width:10%;
+overflow:hidden;
+}
+#calendar .reservation
+{
+cursor:pointer;
+}
+#calendar .emptycell:hover
+{
+background-color:green;
+cursor:pointer;
+}
+#calendar .today
+{
+background-color: yellow;
+}
+.popupform
+{
+position: absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+overflow:scroll;
+text-align:center;
+}
+
+.background
+{
+position:fixed;
+width: 100%;
+height: 100%;
+top:0;
+left:0;
+background: rgba(0,0,0,0.5);
+overflow:hidden;
+}
+.lightbox
+{
+margin-top:10%;
+display:inline-block;
+padding:20px;
+z-index:3;
+position:relative;
+background-color:white;
+border: solid 2px black;
+border-radius:15px;
+}
+#superpopup
+{
+z-index:5;
+}
+#superpopup .lightbox
+{
+z-index:6;
+}
+#client_form .lightbox
+{
+left:15%;
+}
+#clientTable, #reservationTable, #usersTable, #groupsTable
+{
+width:95%;
+margin-left:2.5%;
+margin-bottom:20px;
+border-collapse:collapse;
+}
+#clientTable td, #reservationTable td, #usersTable td, #groupsTable td
+{
+border: solid black 1px;
+text-align:center;
+}
+
+.input_query_result
+{
+cursor:pointer;
+border:solid 0.5px black
+}
+.input_query_result:hover
+{
+background-color:blue;
+}
+.sortorder:after {
+content: '\25b2';
+}
+.sortorder.reverse:after {
+content: '\25bc';
+}
+.room_section
+{
+margin:20px;
+padding:15px;
+border: solid 2px black;
+border-radius: 15px;
+
+}
+.config_section
+{
+margin:20px;
+padding:15px;
+border: solid 2px black;
+border-radius: 15px;
+}
+.section
+{
+margin:20px;
+padding:15px;
+border: solid 2px black;
+border-radius: 15px;
+
+}
+.priceinput
+{
+max-width:70px;
+}
+.notification
+{
+position:fixed;
+bottom:0;
+right:0;
+background-color:white;
+z-index:100;
+padding:10px;
+}
+.notification.valid.error
+{
+border: solid 1px red;
+}
+.notification.valid.success
+{
+border: solid 1px green;
+}
+
+.delform
+{
+margin:10px;
+padding:10px;
+padding-top:0px;
+border:1px solid black;
+border-radius: 10px;
+}
+#add_new_room
+{
+margin:20px;
+}
+#add_new_room button
+{
+width:100%;
+background-color:white;
+border:2px solid black;
+border-radius:5px;
+font-size:22px;
+font-weight:bold;
+}
+#add_new_room button:hover
+{
+background-color: lightgrey;
+}
+#roomsAvailable .lightbox
+{
+top:5%;
+left:20%;
+width:60%;
+padding:20px;
+z-index:3;
+background-color:white;
+border: solid 2px black;
+border-radius:15px;
+}
+#roomsAvailable .room
+{
+border:solid 1px black;
+border-radius:10px;
+margin:10px;
+padding:10px;
+cursor:pointer;
+}
+.menu_icon
+{
+width:35px;
+}
+.loading-page
+{
+width:100%;
+height:100%;
+background: #FFFFFF;
+z-index:10000;
+position:fixed;
+top:0;
+left:0;
+}
+#dashboard_left
+{
+width:30%;
+float:left;
+}
+#dashboard_right
+{
+width:65%;
+float:right;
+}
+.dashboard_panel
+{
+margin:0;
+padding:5px;
+}
+.center
+{
+text-align:center;
+}
+.check-in-button
+{
+min-width:100px;
+min-height:30px;
+}
+#calendar .checkedin
+{
+background-color:green;
+}
+#calendar .registered
+{
+background-color:orange;
+}
+.hour-input
+{
+width:40px;
+}
+.room-in-form
+{
+cursor:pointer;
+border:solid 1px black;
+}
+.prod-category
+{
+position:relative;
+display:inline-block;
+border:1px solid black;
+margin:15px;
+width:150px;
+height:120px;
+vertical-align:top;
+}
+.prod-item
+{
+position:relative;
+display:inline-block;
+border:1px solid black;
+margin:15px;
+width:150px;
+height:120px;
+vertical-align:top;
+}
+.prod-delete
+{
+display:inline-block;
+position:absolute;
+bottom:0px;
+right:0;
+z-index:10;
+cursor:pointer;
+}
+.prod-enter
+{
+width:100%;
+height:85px;
+cursor:pointer;
+border-bottom:1px solid black;
+position:relative;
+}
+.prod-prices{
+
+font-size:smaller;
+position:absolute;
+right:3px;
+top:0px;
+line-height:1px;
+text-align:right;
+}
+.prod-name {
+
+max-width:90px;
+margin-top:0;
+}
+.config_section table
+{
+margin: 8px;
+}
+.config_section td
+{
+border: 1px solid black;
+padding:5px;
+}
+#selectSector ul
+{
+padding:10px;
+}
+
+#selectSector ul li
+{
+padding:10px;
+border:2px solid black;
+border-radius: 5px;
+margin:10px;
+
+}
+#invoices-panel, #products-panel
+{
+width:48%;
+}
+#invoices-panel
+{
+position: relative;
+border:2px solid black;
+min-height:500px;
+}
+.list-invoices table
+{
+width:100%;
+padding:0;
+margin:0;
+}
+#invoices-panel td.link
+{
+border:1px solid black;
+background-color: grey;
+}
+
+.list-invoices
+{
+position:absolute;
+top:0;
+right:0;
+width:100px;
+margin:0;
+}
+.invoicedisplay
+{
+width:80%;
+font-weight:normal;
+margin:10px;
+}
+.invoicedisplay td
+{
+border: solid 1px black;
+padding:3px;
+}
+.invoicedisplay thead
+{
+font-style: italic;
+}
+.invoicedisplay .price
+{
+font-weight:bold;
+}
+
+.selected
+{
+background-color: white!important;
+border-left:initial!important;
+}
+#quantity-select
+{
+position:fixed;
+bottom:0;
+left:0;
+background-color:white;
+border:1px solid black;
+z-index:2;
+}
+.invoiceoptions
+{
+text-align:left;
+}
+.invoiceoptions button
+{
+margin:5px;
+}
+.invoiceoptions img
+{
+width: 20px;
+}
+.boolean-indicator
+{
+width:15px;
+height:15px;
+border-radius:20px;
+margin-right:8px;
+background-color: green;
+display:inline-block;
+}
+.boolean-indicator.red
+{
+background-color: red;
+}
+.detachclient
+{
+position:absolute;
+bottom:8px;
+left:8px;
+}
+.paymentways div
+{
+display:inline-block;
+width:120px;
+border:2px solid black;
+border-radius: 10px;
+margin:10px;
+height: 90px;
+vertical-align:top;
+}
+.invoicelist td
+{
+border:1px solid black;
+padding:3px;
+}
+.invoicelist thead
+{
+font-style: italic;
+}
+.invoicelist .price
+{
+font-weight:bold;
+}
+.tabs li
+{
+background: grey;
+cursor:pointer;
+}
+.stats-list
+{
+margin:15px;
+border: solid 2px black;
+}
+.stats-list thead
+{
+font-style: italic;
+}
+.stats-list td
+{
+border:1px solid black;
+padding: 4px;
+}
+.stats-list .price
+{
+font-weight:bold;
+}
+.price
+{
+font-weight: bold;
+}

@@ -1,0 +1,24 @@
+extends layout
+
+block content
+	h1 #{__('Create the superuser')}
+	form(method="post")
+		table
+		
+			tr
+				td #{__('Choose a username')}
+				td
+					input(type='text', required, name='username')
+					
+			tr
+				td #{__('Choose a password')}
+				td
+					input(type='password', required, name='password1')
+			tr
+				td #{__('Confirm your password')}
+				td
+					input(type='password', required, name='password2')
+					
+			tr
+				td(colspan=2)
+					input(type='submit', value="#{__('Submit')}")

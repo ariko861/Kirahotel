@@ -1,0 +1,17 @@
+doctype html
+html
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+		script(type="text/javascript", src="/javascripts/src/angular.min.js")
+		script(type="text/javascript", src="/javascripts/src/i18n-node-angular.min.js")
+		script(type="text/javascript", src="/javascripts/translation.js")
+	body
+		
+		div(class="container-fluid", ng-app="translate-i18n", ng-controller="Translate")
+			
+			button(class="btn btn-default", ng-click="updateLocale(locale)") #{__("Save modifs")}
+			
+			div(class="form-group" ng-repeat="( key,translation ) in translations")
+				label {{key}}
+				textarea(class="form-control", ng-model="translations[key]") {{translation}}

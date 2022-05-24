@@ -1,0 +1,16 @@
+#header
+{
+display:none;
+}
+form
+{
+display:none;
+}
+.nav 
+{
+display:none;
+}
+a[href]:after {
+content: none;
+}
+

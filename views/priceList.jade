@@ -1,0 +1,8 @@
+each cat in categories
+	h3 #{cat.thisname}
+	each prod in menu[cat._id]
+		p #{prod.thisname}
+		p: i #{prod.thisdescription}
+		p #{prod.thisprice} #{currency.symbol}
+		br
+	hr

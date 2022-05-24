@@ -1,0 +1,11 @@
+// to allow deletion in any page, changes_allowed is true if 
+// user click on 'yes'
+
+ul(class="nav nav-pills pull-right")
+	li(class="navig-header") #{__('Allow Changes ?')}
+	li(ng-class="{active: changes_allowed}")
+		a(href ng-click="changes_allowed = true") #{__('Yes')}
+	li(ng-class="{active: !changes_allowed}")
+		a(href ng-click="changes_allowed = false") #{__('No')}
+	div(class="clearfix")
+	

@@ -1,0 +1,55 @@
+div(id="departure", ng-show="board_selected == 'D'")
+	div(id="dashboard_left", class="dashboard_panel")
+		div(class="center")
+			h2 #{__("Departures for today")}
+		p(ng-show="nodep") #{__("No departures for today")}
+		
+		div(ng-repeat="departure in departures", ng-hide="reservation.status == 'checkedout'" class="dash_res section", ng-click="chargeDep(departure)")
+			p
+				b #{__("Client first name")}: 
+				span {{departure.client.first_name}}
+			p
+				b #{__("Client last name")}: 
+				span {{departure.client.last_name}}
+			p
+				b #{__("Estimated arrival time")}: 
+				span {{departure.arrival_time.hours}} : {{departure.arrival_time.minutes}}
+			p
+				b #{__("Room")}: 
+				span {{departure.room.room_name}}
+	div(id="dashboard_right", class="dashboard_panel")
+		div(id="Details", class="section")
+			h2 #{__("Customer details")}
+			div(class="pull-left")
+				p
+					b #{__("First name")}: 
+					span {{client_dep.first_name}}
+				p
+					b #{__("Last name")}: 
+					span {{client_dep.last_name}}
+				p
+					b #{__("Nationality")}: 
+					span {{client_dep.nationality}}
+				p
+					b #{__("Phone Number")}: 
+					span {{client_dep.phone.mobile}}
+				p
+					b #{__("Email")}: 
+					span {{client_dep.email}}
+				p
+					b #{__("Length of stay")}: 
+					span {{display_dep.nights}} #{__("nights")}
+				p
+					b #{__("Date of arrival")}: 
+					span {{display_dep.begin | date: 'dd-MM-yyyy'}}
+
+			div(class="pull-right")
+				if ( session.rights && session.rights.can_checkout )
+					button(class="btn btn-default" ng-show="display_dep" ng-click="confirmCheckOut(display_dep)") #{__("Check Out")}
+				p #{__("Remarks")}:
+				p {{display_dep.remarks}}
+				p {{client_dep.remarks}}	
+		
+			div(class="clearfix")
+			
+

@@ -1,0 +1,50 @@
+div(id='paymentform', class='popupform hyperpopup', ng-show="showPaymentForm" )
+	div(class='background', ng-click="cancelPayment()")
+	div(class='lightbox')
+		h4 #{__("Amount to pay")} : {{invoice_selected.amount_due | number:2}} {{default_currency.symbol}}
+		span #{__("Several Payments")} ?
+		input(type='checkbox', ng-model="onePayment", ng-true-value="false", ng-false-value="true")
+		p #{__("Please choose a way of payment")} :
+		div(class="paymentways")
+			div(class='link btn btn-default', ng-click="pay_selected = 'cash'")
+				p #{__("Cash")}
+			
+			div(class='link btn btn-default', ng-click="pay_selected = 'cb'")
+				p #{__("CB")}
+				
+			div(ng-show="clientCheckedIn", class='link btn btn-default', ng-click="pay_selected = 'room'")
+				p #{__("Add to Room invoice")}
+			
+		div(ng-show="pay_selected == 'cash'")
+		
+			label(for="amoutToCash") #{__("Amount to cash")} : 
+			div(class="form-inline")
+				input(type="number", class="form-control priceinput", id="amountToCash", step="any", ng-model="newPayment.amount", ng-disabled="onePayment")
+				span  {{newPayment.amount | number:2}}
+				|  {{default_currency.symbol}}
+			
+			label(for="amountToReceive") #{__("Amount received")} :
+			div(class="form-inline")
+				input(id="amountToReceive", type="number", class="form-control priceinput", step="any", ng-model="newPayment.cashreceived")
+				span  {{newPayment.cashreceived | number:2}}
+				|  {{default_currency.symbol}}
+				
+			p #{__("Must return")} : 
+				span {{newPayment.cashreceived - newPayment.amount | number:2}} {{default_currency.symbol}}
+			
+			button(class="btn btn-default", ng-show="newPayment.cashreceived >= newPayment.amount", ng-click="confirmPayment('cash')") #{__("Cash")}
+			
+		div(ng-show="pay_selected == 'cb'")
+		
+			label(for="amountToDraw") #{__("Amount to draw")} : 
+			div(class="form-inline")
+				input(type="number", id="amountToDraw", class="form-control priceinput", step="any", ng-model="newPayment.amount", ng-disabled="onePayment")
+				span  {{newPayment.amount | number:2}}
+				|  {{default_currency.symbol}}
+			
+			button(class="btn btn-default" ng-click="confirmPayment('cb')") #{__("Add CB payment")}
+		
+		div(ng-show="pay_selected == 'room'")
+					
+			button(class="btn btn-default" ng-click="checkoutPayment()") #{__("Add to the reservation invoice")}
+	

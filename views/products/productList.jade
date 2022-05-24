@@ -1,0 +1,24 @@
+div(class="prod-items", ng-show="active_category && sector_actif")
+	div(class="prod-item link btn btn-default", ng-click="active_category=''")
+		a #{__("Up")}
+		br
+		br
+		img(src="/images/CurvedArrowRight32.png")
+		
+	div(class="prod-item btn btn-default", ng-repeat="product in list_products", ng-show="product.category == active_category")
+		div(class="prod-enter", ng-click="selectProd(product)")
+			p(class="prod-name") {{displayContent(product.name)}}
+			div(class="prod-prices")
+				p: b {{product.price | number:2}} {{default_currency.symbol}}
+				p(ng-repeat="currency in list_currencies") ({{currency.code}}) {{(product.price/default_currency.foronedollar)*currency.foronedollar | number:2}} {{currency.symbol}}
+		if management == true
+			div(ng-show="deletion_allowed", class="prod-delete")
+				img(class='icon', src='/images/delete_icon.png' ng-click="deleteProduct(product._id)")
+	if ( (management == true ) && ( session.rights.product_can_add || session.rights.is_superuser ) )
+		div(class="prod-item link btn btn-default", ng-click="showProdForm = true")
+			a #{__("Add product")}
+			br
+			br
+			img(src="/images/More48.png")
+			
+	

@@ -1,0 +1,134 @@
+extends layout
+
+block content
+	div(ng-app="reservations", i18n-locale=i18n.getLocale(), ng-controller="ReservationsController")
+		img(class="notification", src='/images/Blades_snake-32.gif', ng-show='loading')
+		div(class="notification valid", ng-show='validated', ng-class='statutmessage')
+			p {{successmessage}}
+		
+		include ./tools/loading-page.jade
+		if (session.rights.is_superuser || session.rights.reservation_can_change)
+			include ./tools/changeSwitch
+		if (session.rights.is_superuser || session.rights.reservation_can_delete)
+			include ./tools/deleteSwitch
+		div(class="clearfix")
+		
+		if (session.rights.is_superuser || session.rights.reservation_can_add)
+			form(class="form-inline" name="checkAvailableForm", ng-submit="checkAvailableForm.$valid && checkAvailability()")
+				p
+					| #{__('Check availabilities from ')}
+					input(type="date", ng-model="datesToCheck.begin", class="form-control datepicker1", datepicker, required)
+					| #{__(' to ')}
+					input(type="date", ng-model="datesToCheck.end", class="form-control datepicker2", datepicker, required)
+					|  
+					input(class="btn btn-default" type="submit", value="Submit", ng-show="checkAvailableForm.$valid")
+			
+			hr
+		
+		p(class="form-inline") #{__('Display the list of ')}
+			select(class="form-control")
+				option(ng-click='filterEdge("begin")', ng-selected='true') #{__('Arrivals')}
+				option(ng-click='filterEdge("end")') #{__('Departure')}
+				
+			| #{__(' for the next ')}
+			
+			select(class="form-control")
+				option(ng-click='filterDates(0)', ng-selected='true') #{__('day')}
+				option(ng-click='filterDates(8)') #{__('week')}
+				option(ng-click='filterDates(31)') #{__('month')}
+				option(ng-click='filterDates(365)') #{__('year')}
+			
+			button(class="btn btn-default" ng-click="toggleFilter()") #{__("Fetch")}
+		
+		table(class="table table-striped table-hover")
+			thead
+				tr
+					th(ng-show='deletion_allowed')
+					td 
+						a(href, ng-click="order('client_name')") #{__('Client Name')}
+						span(class="sortorder" ng-show="predicate === 'client_name'" ng-class="{reverse:reverse}")
+					
+					td 
+						a(href, ng-click="order('room.room_number')") #{__('Room')}
+						span(class="sortorder" ng-show="predicate === 'room.room_number'" ng-class="{reverse:reverse}")
+					
+					td 
+						a(href, ng-click="order('begin')") #{__('Date of arrival')}
+						span(class="sortorder" ng-show="predicate === 'begin'" ng-class="{reverse:reverse}")
+					td 
+						a(href, ng-click="order('end')") #{__('Date of departure')}
+						span(class="sortorder" ng-show="predicate === 'end'" ng-class="{reverse:reverse}")
+					td 
+						a(href, ng-click="order('arrival_time.hours')") #{__('Arrival Time')}
+						span(class="sortorder" ng-show="predicate === 'arrival_time.hours'" ng-class="{reverse:reverse}")
+					td 
+						a(href, ng-click="order('nights')") #{__('Length of stay')}
+						span(class="sortorder" ng-show="predicate === 'nights'" ng-class="{reverse:reverse}")
+					
+					td 
+						a(href, ng-click="order('total_price')") #{__('Total')}
+						span(class="sortorder" ng-show="predicate === 'total_price'" ng-class="{reverse:reverse}")
+			
+			tbody
+				tr(ng-repeat='reservation in list_reservations | orderBy:predicate:reverse | resfilter:edge:dateFrom:dateTo:filtered')
+					th(ng-show='deletion_allowed')
+						img(class='icon', src='/images/delete_icon.png' ng-click="deleteReservation(reservation._id)")
+					td
+						img(class="icon", ng-show="changes_allowed", src='/images/edit_icon.png', ng-click="editReservation(reservation)")
+						| {{reservation.client.full_name}}
+					td {{reservation.room.room_name}}
+					td(display-date="reservation.begin")
+					td(display-date="reservation.end")
+					td {{reservation.arrival_time.hours}} : {{reservation.arrival_time.minutes}}
+					td {{reservation.nights}} #{__("nights")}
+					td 
+						span(class="price") {{reservation.total_price | number:2}} {{default_currency.symbol}}
+		
+		div(id='roomsAvailable', class='popupform', ng-show="showRoomsAvailable" )
+			div(class='background', ng-click="cancelListAvailable()")
+			div(class='lightbox')
+				h2 {{successmessage}}
+				div(ng-repeat='room in roomsAvailable', class="room", ng-click="launchReservationForm(room, datesToCheck.begin, datesToCheck.end)")
+					div(class="pull-left")
+						h3 {{room.room_name}}
+						p #{__('Room number')} {{room.room_number}}
+					ul(class="pull-right")
+						h4 #{__('Price for the total of the stay')} :
+						li
+							p: b {{room.periodPrice}} {{default_currency.symbol}}
+						li(ng-if="room.rates && room.rates.length > 0")
+							p #{__("Special rates for this period")} :
+							p(ng-repeat="rate in room.rates")
+								span #{__("From")} {{rate.begin | date}} #{__("to")} {{rate.end | date}} : 
+								span(class="price") {{rate.price | number:2}} {{default_currency.symbol}} #{__("per night")}
+				
+						li(ng-repeat="currency in list_currencies") 
+							p(class="pull-right") {{currency.name}} : 
+								span(class="price") {{(room.periodPrice/default_currency.foronedollar)*currency.foronedollar | number:2}} {{currency.symbol}}
+					div(class="clearfix")
+		if (session.rights.is_superuser || session.rights.reservation_can_add)
+			include ./resForm.jade
+		if (session.rights.is_superuser || session.rights.reservation_can_change)
+			include ./resMod.jade
+		if (session.rights.is_superuser || session.rights.client_can_add)
+			include ./clientForm.jade
+		
+	script.
+		var days = { monday: #{__("'Monday'")}, tuesday: #{__("'Tuesday'")}, wednesday: #{__("'Wednesday'")}, thursday: #{__("'Thursday'")}, friday: #{__("'Friday'")}, saturday: #{__("'Saturday'")}, sunday: #{__("'Sunday'")} } 
+		var days_list = [days.sunday, days.monday, days.tuesday, days.wednesday, days.thursday, days.friday, days.saturday]
+		var months = { january: #{__("'January'")}, february: #{__("'February'")}, march: #{__("'March'")}, april: #{__("'April'")}, may: #{__("'May'")}, june: #{__("'June'")}, july: #{__("'July'")}, august: #{__("'August'")}, september: #{__("'September'")}, october: #{__("'October'")}, november: #{__("'November'")}, december: #{__("'December'")} } 
+		var months_list = [ months.january, months.february, months.march, months.april, months.may, months.june, months.july, months.august, months.september, months.october, months.november, months.december ] 
+	
+	script(type="text/javascript", src="/javascripts/controllers/reservations_controllers.js")
+	
+	script.
+		$(function() {
+			
+			$(".datepicker1").change(function() {
+				var beginningDate = $(this).datepicker( "getDate" );
+				var newbeginningDate = addDays( beginningDate, 1);
+				console.log(newbeginningDate)
+				$(".datepicker2").datepicker( "option", "minDate", newbeginningDate );
+				
+			});
+		});

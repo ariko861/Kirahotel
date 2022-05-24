@@ -1,0 +1,61 @@
+div(id="arrivals", ng-show="board_selected == 'A'")
+	div(id="dashboard_left", class="dashboard_panel")
+		div(class="center")
+			h2 #{__("Arrivals for today")}
+		p(ng-show="nores") #{__("No reservations for today")}
+		
+		div(ng-repeat="reservation in reservations", ng-hide="reservation.status == 'checkedin'" class="dash_res section", ng-click="chargeRes(reservation)")
+			p
+				b #{__("Client first name")}: 
+				span {{reservation.client.first_name}}
+			p
+				b #{__("Client last name")}: 
+				span {{reservation.client.last_name}}
+			p
+				b #{__("Estimated arrival time")}: 
+				span {{reservation.arrival_time.hours}} : {{reservation.arrival_time.minutes}}
+			p
+				b #{__("Room")}: 
+				span {{reservation.room.room_name}}
+	div(id="dashboard_right", class="dashboard_panel")
+		div(id="Details", class="section")
+			h2 #{__("Customer details")}
+			div(class="pull-left")
+				p
+					b #{__("First name")}: 
+					span {{client_d.first_name}}
+				p
+					b #{__("Last name")}: 
+					span {{client_d.last_name}}
+				p
+					b #{__("Nationality")}: 
+					span {{client_d.nationality}}
+				p
+					b #{__("Phone Number")}: 
+					span {{client_d.phone.mobile}}
+				p
+					b #{__("Email")}: 
+					span {{client_d.email}}
+				p
+					b #{__("Length of stay")}: 
+					span {{display_res.nights}} #{__("nights")}
+				p
+					b #{__("Date of departure")}: 
+					span {{display_res.end | date: 'dd-MM-yyyy'}}
+
+			div(class="pull-right")
+				if ( session.rights && session.rights.can_checkin )
+					button(class="btn btn-default" ng-show="display_res" ng-click="checkInConf = true", class="check-in-button") #{__("Check In")}
+				p #{__("Remarks")}:
+				p {{display_res.remarks}}
+				p {{customer.remarks}}	
+		
+			div(class="clearfix")
+			
+	div(id='checkinconfirmation', class='popupform', ng-show="checkInConf" )
+		div(class='background', ng-click="checkInConf = false")
+		div(class='lightbox')
+			p #{__("Do you really want to check In ")} {{client_d.full_name}} ?
+			br
+			button(class="pull-left btn btn-warning", ng-click="checkInConf = false") #{__("Cancel")}				
+			button(class="pull-right btn btn-default", ng-click="checkIn()") #{__("Check In")}				

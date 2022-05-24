@@ -1,0 +1,43 @@
+div(id='addReservationForm', class='popupform', ng-show="showFormAddRes" )
+	div(class='background', ng-click="cancelAddReservation()")
+	div(class='lightbox')
+		form(class="form-inline" name="reservationForm", ng-submit="reservationForm.$valid && submitReservation()")
+			div(class="pull-left")
+				input(ng-model="newReservation._id", type="hidden")
+				p #{__("Begin date")} : 
+					input(ng-model="newReservation.begin", class="form-control datepickerRes datepicker1", datepicker, type="date", required)
+				p #{__("End date")} : 
+					input(ng-model="newReservation.end", class="form-control datepickerRes datepicker2", datepicker, type="date", required)
+				p #{__("Room")} : {{newReservation.room.room_name}} 
+				
+				p #{__("Approximative arrival time")} : 
+					input(type="number", max=23, min=0, class="form-control hour-input", ng-model="newReservation.arrival_time.hours")
+					| :
+					input(type="number", max=59, min=0, class="form-control hour-input", ng-model="newReservation.arrival_time.minutes")
+				
+				p(class="pull-left") #{__("Client")} : 
+					ul(class="pull-left")
+						li
+							p
+								input(class="form-control" ng-model="newReservation.client_name", ng-change="fetchClientSearch(newReservation.client_name)", value="{{newReservation.client}}", type="text", required)
+								input(type="button" class="btn btn-primary" ng-click="showCliForm(true)", value='#{__("Add client")}')
+						li(ng-html-compile="clientQueryResult")
+				div(class="clearfix")
+				
+				p
+					input(class="btn btn-default" type="submit", value="Submit", ng-show="reservationForm.$valid")
+			ul(class="pull-right")
+				h4 #{__('Price for the total of the stay')} :
+				li
+					p: b {{newReservation.price}} {{default_currency.symbol}}
+				li(ng-repeat="currency in list_currencies") 
+					p(class="pull-right") {{currency.name}} : {{(newReservation.price/default_currency.foronedollar)*currency.foronedollar | number:2}} {{currency.symbol}}
+					div(class="clearfix")
+				li(ng-if="newReservation.newrates && newReservation.newrates.length > 0")
+					p #{__("Special rates for this period")} :
+					p(ng-repeat="rate in newReservation.newrates")
+						span #{__("From")} {{rate.begin | date}} #{__("to")} {{rate.end | date}} : 
+						span(class="price") {{rate.price | number:2}} {{default_currency.symbol}} #{__("per night")}
+				li
+					button(class="btn btn-default" ng-click="checkPriceForPeriod()", type="button", class="pull-right") #{__("Recalculate the prices")}
+			div(class="clearfix")

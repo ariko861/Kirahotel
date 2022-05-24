@@ -1,0 +1,14 @@
+div(id='printform', class='popupform', ng-show="showPrintForm" )
+	div(class='background', ng-click="cancelInvoicePrint()")
+	div(class='lightbox')
+		form(name="printForm", ng-submit="printForm.$valid && printInvoice()")
+			div(class="form-group")
+				label #{__("Choose language")}
+				select(class="form-control" ng-model="printing.language", ng-options="language._id as language.translated_name for language in list_languages", required)
+	
+			div(class="form-group")
+				label #{__("Choose Currency")}
+				select(class="form-control" ng-model="printing.currency", ng-options="currency._id as currency.name for currency in allcurrencies", required)
+			div(class="form-group")
+				input(class="btn btn-default" type="submit", value="#{__('Submit')}")
+	

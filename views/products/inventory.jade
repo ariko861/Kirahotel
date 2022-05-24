@@ -1,0 +1,34 @@
+div
+	h4 #{__("Products")}
+	table(class="table table-condensed table-striped")
+		tbody(ng-repeat="product in list_products", ng-show="product.manage_stock && product.stock_type == 'piece' && product.sector == sector_actif._id")
+			tr
+				td {{displayContent(product.name)}}
+				td {{product.stock}}
+				td(ng-show="changes_allowed")
+					img(class="link" src="/images/box32.png", ng-click="product.show_options = !product.show_options")
+					
+			tr(ng-show="product.show_options")
+				td(colspan=0)
+					div(class="form-inline")
+						label #{__("Add stock")}
+						input(type="number", ng-model="product.stockToAdd")
+						button(class="btn btn-default", ng-show="product.stockToAdd", ng-click="updateProdStock(product)") #{__("Update stock")}
+						
+		
+	h4 #{__("Materials")}
+	table(class="table table-condensed table-striped")
+		tbody(ng-repeat="material in list_materials", ng-show="material.sector == sector_actif._id")
+			tr
+				td {{displayContent(material.name)}}
+				td {{material.stock}} {{material.unit}}
+				td(ng-show="changes_allowed", class="link" ng-click="material.show_options = !material.show_options")
+					img(src="/images/box32.png")
+			tr(ng-show="material.show_options")
+				td(colspan=0)
+					div(class="form-inline")
+						label #{__("Add stock")}
+						div(class="input-group")
+							div(class="input-group-addon") {{material.unit}}
+							input(type="number", ng-model="material.stockToAdd")
+						button(class="btn btn-default", ng-show="material.stockToAdd", ng-click="updateMaterialStock(material)") #{__("Update stock")}

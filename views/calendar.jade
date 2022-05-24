@@ -1,0 +1,58 @@
+extends layout
+
+block content	
+	div(ng-app="calendar", i18n-locale=i18n.getLocale(), ng-controller="CalendarController", id="content")
+		include ./tools/loading-page.jade
+		img(class="notification", src='/images/Blades_snake-32.gif', ng-show='loading')
+		div(class="notification valid", ng-show='validated', ng-class='statutmessage')
+			p {{successmessage}}
+		table(id='calendar', ng-html-compile="htmlCalendar")
+			
+			//thead()
+				
+			//tbody()
+		
+		button(class="btn btn-default" ng-click='moveCal(-1)') #{__("Previous day")}
+		button(class="btn btn-default pull-right" ng-click='moveCal(1)') #{__("Next day")}
+		br
+		button(class="btn btn-default" ng-click='moveCal(-7)') #{__("Previous week")}
+		button(class="btn btn-default pull-right" ng-click='moveCal(7)') #{__("Next week")}
+		br
+		div(class="align-center")
+			button(class="btn btn-default" ng-click='displayDaysInCal(8)') Display a week
+			button(class="btn btn-default" ng-click='displayDaysInCal(15)') Display 2 weeks
+			button(class="btn btn-default" ng-click='displayDaysInCal(31)') Display a month
+			
+		
+		if (session.rights.reservation_can_add || session.rights.is_superuser)
+			include ./resForm.jade
+		if (session.rights.client_can_add || session.rights.is_superuser)
+			include ./clientForm.jade
+		if (session.rights.reservation_can_change || session.rights.is_superuser)
+			include ./resMod.jade			
+		if (session.rights.reservation_can_read_info || session.rights.is_superuser)
+			include ./resInfo.jade			
+		include ./super-popup.jade			
+				
+
+			
+	script.
+		var days = { monday: #{__("'Monday'")}, tuesday: #{__("'Tuesday'")}, wednesday: #{__("'Wednesday'")}, thursday: #{__("'Thursday'")}, friday: #{__("'Friday'")}, saturday: #{__("'Saturday'")}, sunday: #{__("'Sunday'")} } 
+		var days_list = [days.sunday, days.monday, days.tuesday, days.wednesday, days.thursday, days.friday, days.saturday]
+		var months = { january: #{__("'January'")}, february: #{__("'February'")}, march: #{__("'March'")}, april: #{__("'April'")}, may: #{__("'May'")}, june: #{__("'June'")}, july: #{__("'July'")}, august: #{__("'August'")}, september: #{__("'September'")}, october: #{__("'October'")}, november: #{__("'November'")}, december: #{__("'December'")} } 
+		var months_list = [ months.january, months.february, months.march, months.april, months.may, months.june, months.july, months.august, months.september, months.october, months.november, months.december ] 
+
+	
+	script(type="text/javascript", src="/javascripts/controllers/calendar.js")
+
+	script.
+		$(function() {
+			
+			$(".datepicker1").change(function() {
+				var beginningDate = $(this).datepicker( "getDate" );
+				var newbeginningDate = addDays( beginningDate, 1);
+				console.log(newbeginningDate)
+				$(".datepicker2").datepicker( "option", "minDate", newbeginningDate );
+				
+			});
+		});

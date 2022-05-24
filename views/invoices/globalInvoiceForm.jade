@@ -1,0 +1,84 @@
+div(id='globalinvoiceform', class='popupform', ng-show="showGlobalInvoiceForm" )
+	div(class='background', ng-click="cancelGlobalInvoice()")
+	div(class='lightbox')
+		div(class="pull-left")
+			h3 #{__("Invoice client")} : 
+			ul
+				li
+					span #{__("Find client")} : 
+					input(ng-model="newGlobalInvoice.client.full_name", ng-change="fetchClientSearch(newGlobalInvoice.client.full_name)", value="{{newGlobalInvoice.client.full_name}}", type="text", required)
+					if (session.rights && session.rights.client_can_add)
+						a(ng-click="showCliForm()")  #{__("Add client")}
+				li(ng-html-compile="clientQueryResult")
+			div
+				p #{__("First name")} : {{newGlobalInvoice.client.first_name}}
+				p #{__("Last name")} : {{newGlobalInvoice.client.last_name}}
+				
+			
+			div(ng-if="newGlobalInvoice.reservations && newGlobalInvoice.reservations.length > 0")
+				h3 #{__("Reservations")}
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							th
+							td #{__("Reservation ID")}
+							td #{__("From")}
+							td #{__("To")}
+							td #{__("Length of stay")}
+							td #{__("Net total")}
+					tr(ng-repeat="res in newGlobalInvoice.reservations")
+						th: img(class='icon', src='/images/delete_icon.png' ng-click="toggleResGlob(res, 'del')")
+						td {{res._id}}
+						td {{res.begin | date}}
+						td {{res.end | date}}
+						td {{res.nights}}
+						td(class="price") {{res.net | number:2}}
+			
+			div(ng-if="newGlobalInvoice.subinvoices && newGlobalInvoice.subinvoices.length > 0")
+				h3 #{__("Invoices")}
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							th
+							td #{__("Invoice ID")}
+							td #{__("Date")}
+							td #{__("Sector")}
+							td #{__("Net total")}
+					tr(ng-repeat="inv in newGlobalInvoice.subinvoices")
+						th: img(class='icon', src='/images/delete_icon.png' ng-click="toggleInvGlob(inv, 'del')")
+						td {{inv._id}}
+						td {{inv.date | date}}
+						td {{displayContent(inv.sector.name)}}
+						td(class="price") {{inv.net | number:2}}
+			br		
+			div(ng-show="globIsNotNull()")
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							td #{__("Total for new invoice")}
+							td #{__("Amount Paid")}
+							td #{__("Amount due")}
+					tr
+						td(class="price") {{newGlobalInvoice.total | number:2}} {{default_currency.symbol}}
+						td(class="price") {{newGlobalInvoice.amount_paid | number:2}} {{default_currency.symbol}}
+						td(class="price") {{newGlobalInvoice.total - newGlobalInvoice.amount_paid | number:2}} {{default_currency.symbol}}
+						
+							
+				button(class="btn btn-default" ng-click="submitGlobalInvoice()") #{__("Create global invoice")}
+				
+				
+				
+		div(class="pull-right")
+			h3(ng-if="list_reservations_client.length > 0") #{__("Reservations")}
+			div(class="section link", ng-repeat="res in list_reservations_client", ng-click="toggleResGlob(res, 'add')")
+				p(style="font-size:smaller") #{__("Reservation ID")} : {{res._id}}
+				p #{__("From")} {{res.begin | date}} #{__("to")} {{res.end | date}}
+				p(class="price") {{res.net | number:2}}
+				
+			h3(ng-if="list_invoices_client.length > 0") #{__("Invoices")}
+			div(class="section link", ng-repeat="inv in list_invoices_client", ng-click="toggleInvGlob(inv, 'add')")
+				p(style="font-size:smaller") #{__("Invoice ID")} : {{inv._id}}
+				p #{__("Sector")} : {{displayContent(inv.sector.name)}}. #{__("Date")} : {{inv.date | date}}
+				p(class="price") {{inv.net | number:2}}
+		
+		div(class="clearfix")

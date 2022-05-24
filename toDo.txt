@@ -1,0 +1,16 @@
+- inventaire de chambre
+- ajouter extras pour reservation
+
+- integrer i18n-angular /// fait
+- limiter acces aux produits selon les secteurs // fait
+
+- log systeme 
+- sauvegarde des modifs dans statistiques
+
+- calculatrice en javascript qui sorte de l'ecran
+
+
+
+
+## in process :
+

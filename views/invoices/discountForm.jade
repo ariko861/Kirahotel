@@ -1,0 +1,20 @@
+div(id='discountform', class='popupform', ng-show="showDiscountForm" )
+	div(class='background', ng-click="cancelDiscount()")
+	div(class='lightbox')
+		form(name="discountForm", ng-submit="discountForm.$valid && addDiscount()")
+			div(class="form-group")
+				label #{__("Discount ( in % )")}
+				div(class="input-group")
+					div(class="input-group-addon") %
+					input(class="form-control" type="number", step=1, ng-model="discount.percent", ng-change="calculAmountDiscount()", required)
+			div(class="form-group")
+				label #{__("Discount")} #{__("in")} {{default_currency.translated_name}}
+				div(class="input-group")
+					div(class="input-group-addon") {{default_currency.symbol}}
+					input(class="form-control" type="number", step=0.01, ng-model="discount.amount")
+			p #{__("New total")}
+			p(class="price") {{invoice_selected.total - discount.amount | number:2}} {{default_currency.symbol}}
+			
+			input(class="btn btn-default" type="submit", value="#{__('Submit')}")
+					
+	

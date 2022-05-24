@@ -1,0 +1,39 @@
+doctype html
+html(moznomarginboxes mozdisallowselectionprint)
+	head
+		title= title
+		meta(charset="utf-8")
+		meta(http-equiv="X-UA-Compatible" content="IE=edge")
+		meta(name="viewport" content="width=device-width, initial-scale=1")
+		link(href="/stylesheets/bootstrap.min.css" rel="stylesheet")
+		//link(rel='stylesheet', href='/stylesheets/style.css', type='text/css')
+		link(rel='stylesheet/less', href='/stylesheets/style.less', type='text/css')
+		link(rel='stylesheet', href='/stylesheets/print.css', type='text/css', media='print')
+		link(rel='stylesheet', href='/stylesheets/currency.css', type='text/css')
+		link(rel='stylesheet', href='/stylesheets/jquery-ui.min.css', type='text/css')
+		script(type="text/javascript", src='/javascripts/src/jquery-2.1.4.min.js')
+		script(type="text/javascript", src='/javascripts/src/jquery-ui.min.js')
+		script(type="text/javascript", src='/javascripts/src/less.min.js')
+		script(type="text/javascript", src='/javascripts/src/moment-with-locales.min.js')
+		script(type="text/javascript", src='/javascripts/src/angular.min.js')
+		script(type="text/javascript", src="/javascripts/src/angular-route.min.js")
+		script(type="text/javascript", src="/javascripts/src/i18n-node-angular.min.js")
+		script(type="text/javascript", src='/javascripts/angular-config.js')
+		script(type="text/javascript", src='/javascripts/controllers/time_controller.js')
+		script(type="text/javascript", src="/javascripts/controllers/ngHtmlCompile.js")
+		script(type="text/javascript", src="/javascripts/controllers/printInvoice.js")
+		script(type="text/javascript", src="/javascripts/dict_function.js")
+		
+		style.
+			a
+			{
+			color: #{linkscolor}!important;
+			}
+		script.
+			moment.locale("#{session.locale}");
+		
+	body
+		include ./menu.jade	
+		div(class="container-fluid")
+			block content
+    

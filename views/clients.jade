@@ -1,0 +1,71 @@
+extends layout
+
+block content
+	div(ng-app="clients" ng-controller="ClientsController")
+		include ./tools/loading-page.jade
+		
+		if (session.rights.is_superuser || session.rights.client_can_delete)
+			ul(class="nav nav-pills pull-right")
+				li(class="navig-header") #{__('Allow deleting ?')}
+				li(role="presentation" ng-class="{active: canDelete(true)}")
+					a(href ng-click="setAllowDelete(true)") #{__('Yes')}
+				li(role="presentation" ng-class="{active: canDelete(false)}")
+					a(href ng-click="setAllowDelete(false)") #{__('No')}
+				div(class="clearfix")
+		if (session.rights.is_superuser || session.rights.client_can_delete)
+			include ./tools/changeSwitch.jade
+				
+		div(class="clearfix")
+		
+		if (session.rights.is_superuser || session.rights.client_can_add)
+		include ./clientForm.jade
+		
+		div(class="form-inline")
+			div(class="form-group")
+				label(for="clientRequest1") #{__("Search a customer")}
+				span(id="clientRequest1" ng-html-compile="searchHtml")
+		br
+		table(class="table table-striped table-hover table-condensed")
+			tr
+				th
+				td 
+					a(href, ng-click="order('full_name')") #{__('Full Name')}
+					span(class="sortorder" ng-show="predicate === 'full_name'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('nationality')") #{__('Nationality')}
+					span(class="sortorder" ng-show="predicate === 'nationality'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('language')") #{__('Language')}
+					span(class="sortorder" ng-show="predicate === 'language'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('gender')") #{__('Gender')}
+					span(class="sortorder" ng-show="predicate === 'gender'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('email')") #{__('Email')}
+					span(class="sortorder" ng-show="predicate === 'email'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('birthday')") #{__('Birthdate')}
+					span(class="sortorder" ng-show="predicate === 'birthday'" ng-class="{reverse:reverse}")
+				td
+					a(href, ng-click="order('passport.number')") #{__('Passport Number')}
+					span(class="sortorder" ng-show="predicate === 'passport.number'" ng-class="{reverse:reverse}")
+				
+			tr(ng-repeat='client in list_clients | orderBy:predicate:reverse | filter:query', ng-show='client.managed')
+				th
+					img(ng-show='canDelete(true)' class='icon', src='/images/delete_icon.png' ng-click="deleteClient(client._id)")
+					img(ng-show='changes_allowed' class='icon', src='/images/edit_icon.png' ng-click="editClient(client)")
+					
+				td: a(ng-click="infoClient(client)") {{client.full_name}}
+				td {{client.nationality}}
+				td {{client.language.translated_name}}
+				td {{client.gender}}
+				td: a(href='mailto:{{client.email}}') {{client.email}}
+				td {{client.birthday.day}} {{client.birthday.month}} {{client.birthday.year}}
+				td {{client.passport.number}}
+				
+		if (session.rights.is_superuser || session.rights.client_can_add)
+			button(class="btn btn-default" , ng-click="showCliForm()") #{__('Add New Client')}
+				
+	script(type="text/javascript", src='/javascripts/controllers/clients_front_end.js')
+			
+		

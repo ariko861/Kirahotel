@@ -1,0 +1,16 @@
+div(ng-show="show_form_menu", class="popupform")
+	div(class="background", ng-click="cancelPrint()")
+	div(class="lightbox")
+		form(class="form" name="printMenuForm", ng-submit="printMenuForm.$valid && printPriceList()")
+			h3 #{__("Print price list for")} {{displayContent(formMenu.sector.name)}}
+			div(class="form-group")
+				label #{__("Language")} :
+				select(class="form-control" ng-model="formMenu.language", ng-options="language._id as language.translated_name for language in list_languages" required)
+			div(class="form-group")
+				label #{__("Currency")} :
+				select(class="form-control" ng-model="formMenu.currency" required)
+					option(value="{{default_currency._id}}") {{default_currency.name}}
+					option(ng-repeat="currency in list_currencies", value="{{currency._id}}") {{currency.name}}
+				
+			input(class="btn btn-default" type="submit", value="#{__('Submit')}")
+	

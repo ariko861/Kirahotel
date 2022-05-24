@@ -1,0 +1,15 @@
+div(class="prod-categories", ng-hide="active_category", ng-show="sector_actif")
+	div(class="prod-category btn btn-default", ng-repeat="category in list_categories", ng-show="category.sector == sector_actif._id")
+		div(class="prod-enter", ng-click="setActiveCat(category)")
+			p {{displayContent(category.name)}}
+		if management
+			div(ng-show="deletion_allowed", class="prod-delete", ng-click="askCatDelete(category._id)")
+				img(class='icon', src='/images/delete_icon.png')
+	
+	if ( (management == true ) && ( session.rights.product_can_add || session.rights.is_superuser ) )
+		div(class="prod-category link btn btn-default", ng-click="showCategoryForm = true", ng-show="sector_actif")
+			a #{__("Add category")}
+			br
+			br
+			img(src="/images/More48.png")
+	

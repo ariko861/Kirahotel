@@ -1,0 +1,8 @@
+div(id='checkoutconfirmation', class='popupform', ng-show="checkOutConf" )
+	div(class='background', ng-click="cancelCheckOut()")
+	div(class='lightbox')
+		p #{__("Do you really want to check out ")} {{client_dep.full_name}} ?
+		br
+		button(class="pull-left btn btn-warning", ng-click="cancelCheckOut()") #{__("Cancel")}				
+		button(class="pull-right btn btn-primary", ng-click="checkOut()") #{__("Check Out")}				
+

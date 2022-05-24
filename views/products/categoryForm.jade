@@ -1,0 +1,10 @@
+div(id='addProdCategoryForm', class='popupform', ng-show="showCategoryForm" )
+	div(class='background', ng-click="cancelAddCategory()")
+	div(class='lightbox')
+		form(name="categoryForm", ng-submit="categoryForm.$valid && addCategory()")
+			h3 #{__("Add a new category")}
+			div(class="form-group" ng-repeat="language in list_languages")
+				label #{__('Category name in')} {{language.translated_name}}
+				input(class="form-control", ng-model="newcategory.names[language._id]", placeholder="{{language.translated_name}}" type="text", required)
+				
+			input(class="btn btn-default" type="submit", value="#{__('Add category')}")

@@ -1,0 +1,63 @@
+extends doc-layout
+
+block content
+	ul(class="pull-right")
+		li
+			span(class="header") #{__("Customer")}
+		li
+			span(class="header") #{__("First Name")} : 
+			span #{invoice.client.first_name}
+		li
+			span(class="header") #{__("Last Name")} : 
+			span #{invoice.client.last_name}
+		
+	div(class="clearfix")
+	
+	if ( invoice.reservations && invoice.reservations.length > 0 )
+		h3 #{__("Reservations")}
+		table(class="table table-bordered")
+			thead
+				tr
+					td #{__("Reservation ID")}
+					td #{__("From")}
+					td #{__("To")}
+					td #{__("Nights")}
+					td #{__("Total")}
+					
+				each reservation in invoice.reservations
+					tr
+						td: a(target='new' href="/reservations/print_reservation/#{reservation._id}/#{language._id}/#{currency._id}") #{reservation._id}
+						td #{moment(reservation.begin).format('ll')}
+						td #{moment(reservation.end).format('ll')}
+						td #{reservation.nights}
+						td(class="price") #{reservation.net} #{currency.symbol}
+		br
+		br
+		
+	if (invoice.subinvoices && invoice.subinvoices.length > 0 )
+		h3 #{__("Services")}
+		table(class="table table-bordered")
+			thead
+				tr
+					td #{__("Invoice ID")}
+					td #{__("Date")}
+					td #{__("Sector")}
+					td #{__("Total")}
+					
+				each subinvoice in invoice.subinvoices
+					tr
+						td: a(target='new' href="/invoices/print_subinvoice/#{subinvoice._id}/#{language._id}/#{currency._id}") #{subinvoice._id}
+						td #{moment(subinvoice.date).format('ll')}
+						td 
+							each sector in sectors
+								if ( sector._id == subinvoice.sector.toString() )
+									| #{sector.name}
+						td(class="price") #{subinvoice.net} #{currency.symbol}
+		br
+		br
+		
+	table(class="table table-bordered")
+		
+		tr
+			td #{__("Total")}
+			td(class="price") #{invoice.thistotal}

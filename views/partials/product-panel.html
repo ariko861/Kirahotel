@@ -1,0 +1,41 @@
+section
+	ul(class="nav nav-pills")
+		li(ng-class="{active: panel.isSelected(1)}")
+			a(href, ng-click="panel.selectTab(1)")
+		li(ng-class="{active : panel.isSelected(2)}")
+			a(href, ng-click="panel.selectTab(2)") Specifications
+		li(ng-class="{active : panel.isSelected(3)}")
+			a(href, ng-click="panel.selectTab(3)")Reviews
+	div(class="panel", ng-show="panel.isSelected(1)")
+		h4 Description
+		p {{product.description}}
+	div(class="panel", ng-show="panel.isSelected(2)")
+		h4 Specifications
+		blockquote None yet
+	div(class="panel", ng-show="panel.isSelected(3)")
+		h4 Reviews 
+		blockquote(ng-hide="product.reviews") None yet
+		blockquote(ng-repeat="review in product.reviews")
+			b Stars: {{review.stars}} {{review.body}}
+			cite by: {{review.author}} 
+		form(name="reviewForm", ng-controller="ReviewController as reviewCtrl", ng-submit="reviewForm.$valid && reviewCtrl.addReview(product)", novalidate)
+			blockquote
+				b Stars: {{reviewCtrl.review.stars}}
+				{{reviewCtrl.review.body}}
+				cite by: {{reviewCtrl.review.author}} 
+		
+			select(ng-model="reviewCtrl.review.stars", required)
+				option(value="1")1 star
+				option(value="2")2 stars
+				option(value="3")3 stars
+				option(value="4")4 stars
+				option(value="5")5 stars
+			br
+			textarea(ng-model="reviewCtrl.review.body", required)
+			br
+			label by:
+			input(ng-model= "reviewCtrl.review.author", type="email", required)
+			br
+			input(ng-model="reviewCtrl.review.terms", type="checkbox", required) I agree to the terms
+			div reviewForm is {{reviewForm.$valid}}
+			input(type="submit", value="Submit")

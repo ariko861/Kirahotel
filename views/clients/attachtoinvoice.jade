@@ -1,0 +1,31 @@
+div(id='attachclient', class='popupform', ng-show="showClientAttachement" )
+	div(class='background', ng-click="cancelAttachClient()")
+	div(class='lightbox')
+		button(type="button" class="close pull-right" aria-label="Close", ng-click="cancelAttachClient()")
+			span(aria-hidden="true") &times;
+		div(class="clearfix")
+		
+		div(class="pull-left")
+			p #{__("Search customer ( by name )")} : 
+			ul
+				li(class="form-inline")
+					input(class="form-control" ng-model="reqclient.full_name", ng-change="fetchClientSearch(reqclient.full_name)", value="{{reqclient.full_name}}", type="text", required)
+					if (session.rights && session.rights.client_can_add)
+						button(class="btn btn-primary" ng-click="showCliForm()")  #{__("Add client")}
+				li(ng-html-compile="clientQueryResult")
+		
+			button(class="btn btn-default" ng-click="addClientToInvoice()", ng-show="reqclient._id") #{__("Assign client to invoice")}
+		
+		div(class="pull-right")
+			h3 #{__("Clients checked in")}
+			div(ng-repeat="res in checkedIn" class="client_checked section", ng-click="attachcheckedin(res.client)")
+				p
+					b #{__("Room")}: 
+					span {{res.room.room_number}} 
+					span {{res.room.room_name}}
+				p
+					b #{__("Client name")}: 
+					span {{res.client.full_name}}
+		p(class="detachclient", ng-click="detachClient()")
+			img(class='icon', src='/images/delete_icon.png' ng-click="removeClient()")
+			span  #{__("Remove client")}

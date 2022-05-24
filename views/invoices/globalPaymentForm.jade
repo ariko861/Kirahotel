@@ -1,0 +1,77 @@
+div(id='globalpaymentform', class='popupform', ng-show="showGlobalPaymentForm" )
+	div(class='background', ng-click="cancelGlobalPayment()")
+	div(class='lightbox')
+		div(class="pull-left")
+			div
+				p #{__("First name")} : {{newGlobalPayment.client.first_name}}
+				p #{__("Last name")} : {{newGlobalPayment.client.last_name}}
+				
+			
+			div(ng-if="newGlobalPayment.reservations && newGlobalPayment.reservations.length > 0")
+				h3 #{__("Reservations")}
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							th
+							td #{__("Reservation ID")}
+							td #{__("From")}
+							td #{__("To")}
+							td #{__("Length of stay")}
+							td #{__("Net total")}
+					tr(ng-repeat="res in newGlobalPayment.reservations")
+						th: img(class='icon', src='/images/delete_icon.png' ng-click="toggleResPay(res, 'del')")
+						td {{res._id}}
+						td {{res.begin | date}}
+						td {{res.end | date}}
+						td {{res.nights}}
+						td(class="price") {{res.net | number:2}}
+			
+			div(ng-if="newGlobalPayment.subinvoices && newGlobalPayment.subinvoices.length > 0")
+				h3 #{__("Invoices")}
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							th
+							td #{__("Invoice ID")}
+							td #{__("Date")}
+							td #{__("Sector")}
+							td #{__("Net total")}
+					tr(ng-repeat="inv in newGlobalPayment.subinvoices")
+						th: img(class='icon', src='/images/delete_icon.png' ng-click="toggleInvPay(inv, 'del')")
+						td {{inv._id}}
+						td {{inv.date | date}}
+						td {{displayContent(inv.sector.name)}}
+						td(class="price") {{inv.net | number:2}}
+			br		
+			div(ng-show="globPayIsNotNull()")
+				table(class="table table-hover table-bordered")
+					thead
+						tr
+							td #{__("Total to pay")}
+							td #{__("Amount Paid")}
+							td #{__("Amount due")}
+					tr
+						td(class="price") {{newGlobalPayment.total | number:2}} {{default_currency.symbol}}
+						td(class="price") {{newGlobalPayment.amount_paid | number:2}} {{default_currency.symbol}}
+						td(class="price") {{newGlobalPayment.amount_due | number:2}} {{default_currency.symbol}}
+						
+							
+				button(class="btn btn-default" ng-click="processGlobalPayment()") #{__("Process payment")}
+				
+				
+				
+		div(class="pull-right")
+			h3(ng-if="list_reservations_client.length > 0") #{__("Reservations")}
+			div(class="section link", ng-repeat="res in list_reservations_client", ng-hide="res.amount_due <= 0", ng-click="toggleResPay(res, 'add')")
+				p(style="font-size:smaller") #{__("Reservation ID")} : {{res._id}}
+				p #{__("From")} {{res.begin | date}} #{__("to")} {{res.end | date}}
+				p(class="price") {{res.net | number:2}}
+				
+			h3(ng-if="list_invoices_client.length > 0") #{__("Invoices")}
+			div(class="section link", ng-repeat="inv in list_invoices_client", ng-hide="inv.amount_due <= 0", ng-click="toggleInvPay(inv, 'add')")
+				p(style="font-size:smaller") #{__("Invoice ID")} : {{inv._id}}
+				p #{__("Sector")} : {{displayContent(inv.sector.name)}}. #{__("Date")} : {{inv.date | date}}
+				p(class="price") {{inv.net | number:2}}
+		
+		div(class="clearfix")
+

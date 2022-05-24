@@ -1,0 +1,129 @@
+extends layout
+
+block content
+	div(ng-app="rooms" ng-controller="RoomsController")
+		
+		include ./tools/loading-page.jade
+		include ./tools/super-popup.jade
+		include ./tools/notification.jade
+		if (session.rights.room_can_delete || session.rights.is_superuser)
+			include ./tools/deleteSwitch.jade
+		if (session.rights.room_can_change || session.rights.is_superuser)		
+			include ./tools/changeSwitch.jade
+		
+		div(class="clearfix")
+		
+		div(class="pull-right delform", ng-show="deletion_allowed")
+			h3 #{__('Choose rates to delete')}
+			form(name="deleteRates", ng-submit="deleteRates.$valid && deleteIDRates()", novalidate)
+				select(ng-model="rateToDelete", required)
+					option(ng-repeat="rate in list_rates" value="{{rate._id}}") {{rate.name}} #{__('from')} {{rate.begin | date: 'dd-MM-yyyy'}} #{__('to')} {{rate.end | date: 'dd-MM-yyyy'}}
+				br
+				input(type="submit", value="#{__('Delete this rate')}", ng-show="deleteRates.$valid")
+		div(class="clearfix")
+		
+		div(ng-repeat="room in list_rooms", class="room_section")
+			div(class="pull-left")
+				span(class="form-inline" ng-html-compile="roomNameHTML")
+				p 
+					i #{__('Room')} {{room.room_number}}
+				
+				// list default prices per currency for the room	
+				form(name="defaultPricesForm", ng-submit="defaultPricesForm.$valid && updatePrice(room)", novalidate)
+					p
+						span(class="form-inline" ng-html-compile="pricesFormHTML")
+						span(class="price")  {{default_currency.symbol}}
+					p(ng-repeat="currency in list_currencies")  ({{currency.code}}) 
+						span(class="price") {{(room.default_price / default_currency.foronedollar) * currency.foronedollar | number:2}}
+						span(class="price")  {{currency.symbol}}
+					input(class="btn btn-default" type="submit", value="#{__('Save')}", ng-show="defaultPricesForm.$valid && changes_allowed")
+			
+			div(class="pull-right")
+				section(ng-show="changes_allowed")
+					form(class="form-inline" name="selectRates", ng-submit="selectRates.$valid && addRatesToRoom(room._id)", novalidate)
+						select(class="form-control" ng-model="newRatesForRoom[room._id]", required)
+							option(ng-repeat="rate in list_rates" value="{{rate._id}}") {{rate.name}} #{__('From')} {{rate.begin | date: 'dd-MM-yyyy'}} #{__('to')} {{rate.end | date: 'dd-MM-yyyy'}}
+						input(class="btn btn-default" type="submit", value="#{__('Add this rate')}", ng-show="selectRates.$valid")
+					a(href, ng-click ="showSubmitRate()") #{__('Create new rate')}
+									
+				div
+					h3 #{__('Rates applied to the room')}
+					div(ng-repeat="rate in room.rates")
+						p
+							i 
+								u {{rate.name}} 
+								| #{__('from')} 
+								b(display-date="rate.begin")
+								|  #{__('to')} 
+								b(display-date="rate.end")
+						p
+							p(class="price") {{rate.price | number:2}} {{default_currency.symbol}}
+							span(ng-repeat='currency in list_currencies')
+								i {{currency.code}} : 
+								span(class="price") {{(rate.price / default_currency.foronedollar) * currency.foronedollar | number:2}} {{currency.symbol}} 
+			div(class="clearfix")
+			
+			div(class="room-occupation")
+				div(class="boolean-indicator" ng-class="{ red: room.occupied }")
+				span(ng-if="room.occupied") #{__("The room is occupied")}
+				span(ng-if="room.occupied == false") #{__("The room is free")}
+				a(ng-if="changes_allowed", ng-click="forceRoomFree(room)") #{__("Force set room free")}
+			
+		if (session.rights.room_can_add || session.rights.is_superuser)	
+			div(id='add_new_room', ng-show='changes_allowed')
+				button(ng-click="launchAddRoomForm()") #{__('Add new Room')}
+			
+		div(id='rates_form', class='popupform', ng-show="showRatesForm" )
+			div(class='background', ng-click="cancelRateForm()")
+			div(class='lightbox')
+				form(name="addRatesForm", ng-submit="addRatesForm.$valid && addRates()", novalidate)
+					div(class="form-group")
+						label(for="rateName") #{__('Name of new rates')}
+						input(class="form-control", id="rateName" ng-model="newRates.name", type="text", required)
+					div(class="form-group form-inline")
+						label #{__('Price of new rate')} : 
+						input(class="form-control priceinput" ng-model="newRates.price", type="number", min="0", step="any", required)
+						|  {{default_currency.symbol}}
+					
+					p(ng-repeat="currency in list_currencies")  ({{currency.code}}) 
+						span {{(newRates.price / default_currency.foronedollar) * currency.foronedollar | number:2}}
+						|  {{currency.symbol}}
+					
+					div(class="form-group")
+						label #{__('Begin date')}
+						input(class="form-control" ng-model="newRates.begin", class="datepickerRes datepicker1", datepicker, type="date", required)
+					div(class="form-group")
+						label #{__('End date')}
+						input(class="form-control" ng-model="newRates.end", class="datepickerRes datepicker2", datepicker, type="date", required)
+					div(class="form-group")
+					p
+						input(class="btn btn-default" type="submit", value="#{__('Submit')}", ng-show="addRatesForm.$valid")
+		
+		if (session.rights.room_can_add || session.rights.is_superuser)
+			div(id='add_room_form', class='popupform', ng-show="showAddRoomForm" )
+				div(class='background', ng-click="cancelAddRoomForm()")
+				div(class='lightbox')
+					form(name="addRoomForm", ng-submit="addRoomForm.$valid && addRoom()", novalidate)
+						div(class="form-group")
+							label #{__('Name of the new room')} 
+							input(class="form-control" ng-model="newRoom.room_name", type="text", placeholder="#{__('Room name')}" required)
+						div(class="form-group")
+							label #{__('Number of the room')} 
+							input(class="form-control" ng-model="newRoom.room_number", type="text", placeholder="#{__('Room number')}" required)
+						div
+							input(class="btn btn-warning" type="button", value="#{__('Cancel')}", ng-click="cancelAddRoomForm()")
+							input(class="btn btn-default" type="submit", value="#{__('Submit')}", ng-show="addRoomForm.$valid")
+				
+	script(type="text/javascript", src="/javascripts/controllers/rooms_controllers.js")
+	script.
+		$(function() {
+			
+			$(".datepicker1").change(function() {
+				var beginningDate = $(this).datepicker( "getDate" );
+				var newbeginningDate = addDays( beginningDate, 1);
+				console.log(newbeginningDate)
+				$(".datepicker2").datepicker( "option", "minDate", newbeginningDate );
+				
+			});
+		});
+	

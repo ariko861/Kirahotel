@@ -1,0 +1,33 @@
+extends layout
+
+block content
+	div(ng-app="monitor", i18n-locale=i18n.getLocale(), ng-controller="MonitorController")
+		
+		include ./tools/loading-page.jade
+		include ./tools/notification.jade
+		
+		div(class="form-inline")
+			label(class="control-label") #{__("Display logs only above level")} : 
+			select(class="form-control", ng-model="level_filter")
+				option(ng-repeat="level in levels", ng-class="'warning'+level", value="{{level}}") {{level}}
+		hr
+		
+		
+		table(class="table table-striped")
+			thead
+				tr
+					td #{__("Log date")}
+					td #{__("User")}
+					td #{__("Action")}
+					td #{__("Level")}
+			
+			tr(ng-class="'warning'+log.level" ng-repeat="log in logs | orderBy: '-date' | filter: logFilter")
+				td(display-time="log.date")
+				td {{log.user.username}}
+				td {{log.translated_action}}
+				td {{log.level}}
+		
+
+	script(type="text/javascript", src='/javascripts/controllers/monitor.js')
+	script(type="text/javascript", src='/javascripts/src/socket.io.js')
+	

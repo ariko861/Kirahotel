@@ -1,0 +1,38 @@
+extends ../layout
+
+block content	
+	div(ng-app="calendar", ng-controller="CalendarController as cal")
+		table(id='calendar')
+			
+			thead(create-Cal-Head="")
+				
+			tbody
+				tr(ng-repeat="room in rooms")
+					th(fill-Reserv-Table="" ) {{ room.room_name }}
+					
+					
+				tr 
+			
+		div(id='reservation_form', ng-show="cal.divform")
+			form(name="reservationForm", ng-controller="ReservationsController as resCtrl", ng-submit="reservationForm.$valid && resCtrl.addReservation()")
+				p Begin date
+				input(ng-model="resCtrl.newReservation.begin_date" type="date", required, value="{{selected_date}}")
+				p End date
+				input(ng-model="resCtrl.newReservation.end_date", type="date", required)
+				p Room
+				select(ng-model="resCtrl.newReservation.room_id")
+					option(ng-repeat="room in rooms" value="{{room._id}}", ng-selected="selected_room == room._id") {{room.room_name}}
+				p Client
+				input(ng-model="resCtrl.newReservation.client_id", type="text", required)
+				p {{reservationForm.$valid}}
+				input(type="submit", value="Submit")
+
+			
+	script.
+		var days = { monday: #{__("'Monday'")}, tuesday: #{__("'Tuesday'")}, wednesday: #{__("'Wednesday'")}, thursday: #{__("'Thursday'")}, friday: #{__("'Friday'")}, saturday: #{__("'Saturday'")}, sunday: #{__("'Sunday'")} } 
+		var days_list = [days.sunday, days.monday, days.tuesday, days.wednesday, days.thursday, days.friday, days.saturday]
+		var months = { january: #{__("'January'")}, february: #{__("'February'")}, march: #{__("'March'")}, april: #{__("'April'")}, may: #{__("'May'")}, june: #{__("'June'")}, july: #{__("'July'")}, august: #{__("'August'")}, september: #{__("'September'")}, october: #{__("'October'")}, november: #{__("'November'")}, december: #{__("'December'")} } 
+		var months_list = [ months.january, months.february, months.march, months.april, months.may, months.june, months.july, months.august, months.september, months.october, months.november, months.december ] 
+	script(src="/javascripts/controllers/calendar.js")
+
+	

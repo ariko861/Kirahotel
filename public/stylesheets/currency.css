@@ -1,0 +1,27 @@
+/* class to add currency signs */
+.EUR:before
+{
+content:'€';
+}
+.USD:before, .SGD:before, .CAD:before, .AUD:before
+{
+content:'$';
+}
+.IDR:before
+{
+content:'Rp';
+}
+.GBP:before
+{
+content:'£';
+}
+.INR:before
+{
+content:'₹';
+}
+.GEL:before
+{
+content:'ლ';
+}
+
+/* end of currencies part */

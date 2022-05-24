@@ -1,0 +1,44 @@
+div(id='modReservationForm', class='popupform', ng-show="showModRes == true" )
+	div(class='background', ng-click="cancelModReservation()")
+	div(class='lightbox')
+		form(class="form-inline" name="modReservationForm", ng-submit="modReservationForm.$valid && modifReservation()")
+			div(class="pull-left")
+				
+				p #{__("Begin date")} : 
+					input(ng-model="modResBegin", class="form-control datepickerRes datepicker1", datepicker, ng-disabled='resToMod.status == "checkedin"', type="date", required)
+				span(ng-show='resToMod.status == "checkedin"' class="small-text notice") #{__("* the begin of a reservation cannot be changed once customer has checked in")}
+				p #{__("End date")} : 
+					input(ng-model="modResEnd", class="form-control datepickerRes datepicker2", datepicker, type="date", required)
+				p
+					img(class="icon", src='/images/edit_icon.png', ng-click="changeRoom()")
+					| #{__("Room")} : {{resToMod.room.room_name}}
+				div(ng-show="show_change_room == true", class="section")
+					p #{__("Rooms available during the selected period")}
+						div(ng-repeat="room in rooms_available", ng-click="confirmChangeRoom(room)", class="room-in-form")
+							p {{room.room_name}} {{room.room_number}}
+						input(type="button" class="btn btn-warning" ng-click="cancelChangeRoom()", value='#{__("Cancel")}')
+				p #{__("Approximative arrival time")} : 
+					input(type="number", max=23, min=0, class="form-control hour-input", ng-model="resToMod.arrival_time.hours")
+					| :
+					input(type="number", max=59, min=0, class="form-control hour-input", ng-model="resToMod.arrival_time.minutes")
+				
+				
+				p
+					input(class="btn btn-default" type="submit", value="Submit", ng-show="modReservationForm.$valid")
+			ul(class="pull-right")
+				h4 #{__('Price for the total of the stay')} :
+				li
+					p: b {{resToMod.price}} {{default_currency.symbol}}
+				li(ng-repeat="currency in list_currencies") 
+					p(class="pull-right") {{currency.name}} : {{(resToMod.price/default_currency.foronedollar)*currency.foronedollar | number:2}} {{currency.symbol}}
+					div(class="clearfix")
+				
+				li(ng-if="resToMod.newrates && resToMod.newrates.length > 0")
+					p #{__("Special rates for this period")} :
+					p(ng-repeat="rate in resToMod.newrates")
+						span #{__("From")} {{rate.begin | date}} #{__("to")} {{rate.end | date}} : 
+						span(class="price") {{rate.price | number:2}} {{default_currency.symbol}} #{__("per night")}
+				
+				li
+					button(ng-click="checkModPriceForPeriod()", type="button", class="btn btn-default pull-right") #{__("Recalculate the prices")}
+			div(class="clearfix")

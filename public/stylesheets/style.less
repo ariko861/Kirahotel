@@ -1,0 +1,684 @@
+@font-face {
+font-family: Caviar Dreams;
+src: url('../fonts/CaviarDreams.ttf');
+}
+
+@font-face {
+font-family: Caviar Dreams Bold;
+src: url('../fonts/CaviarDreams_Bold.ttf');
+}
+
+/*
+less variables
+*/
+@color-green: #6CFC5B;
+@color-red: color('red');
+@border-color: color('black');
+@color-nav: #947874;
+
+.bordered(@size) {
+border: solid unit(@size, px) black;
+}
+
+
+/*
+end of less variables
+*/
+
+
+body {
+  padding:0px;
+  margin:0px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+}
+
+a {
+  color: #FCBF24;
+}
+ul
+{
+list-style: none;
+}
+
+.pull-right
+{
+float:right;
+}
+.pull-left
+{
+float:left;
+}
+.align-center
+{
+text-align:center;
+}
+.clearfix
+{
+clear:both;
+}
+/*
+.nav-pills>li.active>a
+{
+background-color: @color-nav!important;
+}
+*/
+.deleteon
+{
+cursor: crosshair;
+}
+.link
+{
+cursor:pointer;
+}
+.active a
+{
+color: white;
+}
+.icon
+{
+width:20px;
+cursor: pointer;
+}
+table
+{
+border-collapse:collapse;
+}
+.small-text
+{
+font-size:smaller;
+}
+#header
+{
+margin:0px;
+padding:0;
+height: 150px;
+overflow:hidden;
+border-bottom:solid lightgrey 1px;
+position:relative;
+}
+#header img
+{
+
+float:left;
+vertical-align:bottom;
+}
+#mainlogo
+{
+height:100px;
+position:absolute;
+bottom:5px;
+left:5px;
+}
+#header ul li
+{
+float:left;
+list-style:none;
+margin-right:10px;
+font-size: 18px;
+}
+#mainmenu
+{
+float:left;
+font-family: Caviar Dreams Bold;
+margin:0;
+padding:5px;
+
+width:100%;
+background-color: #000000;
+position:fixed;
+z-index:100;
+}
+#mainmenu li
+{
+position:relative;
+}
+#mainmenu li ul
+{
+display: none;
+position: absolute;
+top:100%;
+left:0;
+background-color: #000000;
+}
+#mainmenu li:hover>ul
+{
+display:initial;
+}
+#mainmenu li ul li
+{
+float:initial;
+margin:8px;
+}
+
+#mainmenu a
+{
+text-decoration:none;
+color: #FCBF24;
+}
+#mainmenu a:hover
+{
+text-shadow: #FCBF24 1px 1px 1px;
+text-decoration: underline;
+}
+
+.languageflag
+{
+width:24px;
+margin-right:10px;
+}
+#chooselang
+{
+float:right;
+}
+#userinfos
+{
+position:absolute;
+bottom:5px;
+right:5px;
+}
+#clock
+{
+position: absolute;
+left:0;
+right:0;
+margin-left:auto;
+margin-right:auto;
+top:55px;
+text-align:center;
+}
+#clocktime
+{
+font-weight:bold;
+font-size:23px;
+margin-bottom:0px;
+}
+#clockdate
+{
+font-style:italic;
+margin-top:0px;
+}
+
+.ng-invalid.ng-dirty {
+border-color: #FA787E;
+}
+
+.ng-valid.ng-dirty {
+border-color: #78FA89;
+}
+
+
+.clear, .clearfix
+{
+clear:both;
+}
+#calendar
+{
+width:95%;
+margin-bottom:20px;
+border-collapse:collapse;
+table-layout:fixed;
+}
+#calendar td
+{
+.bordered(1);
+text-align:center;
+}
+.calendar-body tr
+{
+height:80px;
+}
+.calendar-body th
+{
+width:150px;
+}
+.calendar-body td
+{
+width:10%;
+overflow:hidden;
+}
+#calendar .reservation
+{
+cursor:pointer;
+}
+#calendar .emptycell:hover
+{
+background-color:green;
+cursor:pointer;
+}
+#calendar .today
+{
+background-color: yellow;
+}
+.popupform
+{
+position: absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+overflow:scroll;
+text-align:center;
+}
+
+.background
+{
+position:fixed;
+width: 100%;
+height: 100%;
+top:0;
+left:0;
+background: rgba(0,0,0,0.5);
+overflow:hidden;
+}
+.lightbox
+{
+margin-top:10%;
+display:inline-block;
+padding:20px;
+z-index:3;
+position:relative;
+background-color:white;
+border-radius:15px;
+.bordered(2);
+}
+#superpopup
+{
+z-index:5;
+}
+#superpopup .lightbox
+{
+z-index:6;
+}
+.hyperpopup
+{
+z-index: 7;
+}
+.hyperpopup .lightbox
+{
+z-index: 8;
+}
+
+
+
+#clientTable, #reservationTable, #usersTable, #groupsTable
+{
+width:95%;
+margin-left:2.5%;
+margin-bottom:20px;
+border-collapse:collapse;
+}
+#clientTable td, #reservationTable td, #usersTable td, #groupsTable td
+{
+.bordered(1);
+text-align:center;
+}
+
+.input_query_result
+{
+cursor:pointer;
+.bordered(0.5);
+}
+.input_query_result:hover
+{
+background-color:blue;
+}
+.sortorder:after {
+content: '\25b2';
+}
+.sortorder.reverse:after {
+content: '\25bc';
+}
+.room_section, .section, .config_section
+{
+margin:20px;
+padding:15px;
+border-radius: 15px;
+.bordered(2);
+}
+.priceinput
+{
+max-width:130px;
+}
+.notification
+{
+position:fixed;
+bottom:0;
+right:0;
+background-color:white;
+z-index:100;
+padding:10px;
+}
+
+.notification.valid.error
+{
+border: solid 1px @color-red;
+}
+.notification.valid.success
+{
+border: solid 1px @color-green;
+}
+
+.delform
+{
+margin:10px;
+padding:10px;
+padding-top:0px;
+border-radius: 10px;
+.bordered(1);
+}
+#add_new_room
+{
+margin:20px;
+}
+#add_new_room button
+{
+width:100%;
+background-color:white;
+border-radius:5px;
+font-size:22px;
+font-weight:bold;
+.bordered(2);
+}
+#add_new_room button:hover
+{
+background-color: lightgrey;
+}
+/*#roomsAvailable .lightbox
+{
+top:5%;
+left:20%;
+width:60%;
+padding:20px;
+z-index:3;
+background-color:white;
+border-radius:15px;
+.bordered(2);
+}*/
+#roomsAvailable .room
+{
+border-radius:10px;
+margin:10px;
+padding:10px;
+cursor:pointer;
+.bordered(1);
+}
+.menu_icon
+{
+width:35px;
+}
+.loading-page
+{
+width:100%;
+height:100%;
+background: #FFFFFF;
+z-index:10000;
+position:fixed;
+top:0;
+left:0;
+}
+#dashboard_left
+{
+width:30%;
+float:left;
+}
+#dashboard_right
+{
+width:65%;
+float:right;
+}
+.dashboard_panel
+{
+margin:0;
+padding:5px;
+}
+.center
+{
+text-align:center;
+}
+.check-in-button
+{
+min-width:100px;
+min-height:30px;
+}
+#calendar .checkedin
+{
+background-color:@color-green;
+}
+#calendar .registered
+{
+background-color:orange;
+}
+#calendar .checkedout
+{
+background-color: red;
+}
+
+.hour-input
+{
+width:40px;
+}
+.room-in-form
+{
+cursor:pointer;
+.bordered(1);
+}
+.prod-category, .prod-item
+{
+/*position:relative;*/
+display:inline-block;
+margin:15px;
+width:150px;
+height:120px;
+vertical-align:top;
+.bordered(1);
+}
+.prod-delete
+{
+display:inline-block;
+bottom:0px;
+right:0;
+z-index:10;
+cursor:pointer;
+}
+.prod-enter
+{
+width:100%;
+height:85px;
+cursor:pointer;
+border-bottom:1px solid black;
+/*position:relative;*/
+white-space: initial!important;
+}
+.prod-prices{
+
+font-size:smaller;
+/*position:absolute;*/
+right:3px;
+bottom:0px;
+line-height:1px;
+text-align:right;
+}
+.prod-name {
+
+margin-top:0;
+}
+.config_section table
+{
+margin: 8px;
+}
+.config_section td
+{
+padding:5px;
+.bordered(1);
+}
+#selectSector ul
+{
+padding:10px;
+}
+
+#selectSector ul li
+{
+padding:10px;
+border-radius: 5px;
+margin:10px;
+.bordered(2);
+}
+#invoices-panel, #products-panel
+{
+width:48%;
+}
+#invoices-panel
+{
+position: relative;
+min-height:500px;
+.bordered(2);
+}
+.list-invoices table
+{
+width:100%;
+padding:0;
+margin:0;
+}
+#invoices-panel td.link
+{
+background-color: grey;
+.bordered(1);
+}
+
+.list-invoices
+{
+position:absolute;
+top:0;
+right:0;
+width:100px;
+margin:0;
+}
+.invoicedisplay
+{
+width:80%;
+font-weight:normal;
+margin:10px;
+}
+.selected
+{
+background-color: white!important;
+border-left:initial!important;
+}
+#quantity-select
+{
+position:fixed;
+bottom:0;
+left:0;
+background-color:white;
+z-index:2;
+.bordered(1);
+}
+.invoiceoptions
+{
+text-align:left;
+}
+.invoiceoptions button
+{
+margin:5px;
+}
+.invoiceoptions img
+{
+width: 20px;
+}
+.boolean-indicator
+{
+width:15px;
+height:15px;
+border-radius:20px;
+margin-right:8px;
+background-color: green;
+display:inline-block;
+}
+.boolean-indicator.red
+{
+background-color: red;
+}
+.detachclient
+{
+position:absolute;
+bottom:8px;
+left:8px;
+}
+.paymentways div
+{
+display:inline-block;
+width:120px;
+border-radius: 10px;
+margin:10px;
+height: 90px;
+vertical-align:top;
+.bordered(2);
+}
+.invoicelist td, .stats-list td, .invoicedisplay td
+{
+padding:3px;
+.bordered(1);
+}
+.invoicelist thead, .stats-list thead, .invoicedisplay thead
+{
+font-style: italic;
+}
+
+.tabs li
+{
+background: grey;
+cursor:pointer;
+}
+.stats-list
+{
+margin:15px;
+.bordered(2);
+}
+.close span
+{
+width:20px;
+height:20px;
+}
+.btn
+{
+margin:5px;
+}
+.navig-header
+{
+padding: 10px 15px;
+}
+
+.price
+{
+font-weight: bold;
+}
+.margin-bottom
+{
+margin-bottom: 50px;
+}
+
+.warning0
+{
+color:#1E49FF;
+}
+.warning1
+{
+color:#1EEAFF;
+}
+.warning2
+{
+color:#1EFF3F;
+}
+.warning3
+{
+color:#FFDF1E;
+}
+.warning4
+{
+color:orange;
+}
+.warning5
+{
+color: red;
+}

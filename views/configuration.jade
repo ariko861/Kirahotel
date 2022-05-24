@@ -1,0 +1,178 @@
+extends layout
+
+block content
+	div(ng-app="config" ng-controller="ConfigController")
+		include ./tools/notification.jade
+		include ./tools/loading-page.jade
+		
+		div(class="config_section")
+			h3 #{__('Languages')}
+			table(class="table table-hover table-condensed table-striped table-bordered")
+				thead
+					tr
+						td #{__("Language name")}
+						td #{__("Language code")}
+						td #{__("Activated")} ?
+						td #{__("Default language")} ?
+						
+				tr(ng-repeat="language in language_list")
+					td {{language.translated_name}}
+					td {{language.code}}
+					td
+						input(type='radio', ng-model="language.active", value=1, ng-change="setLangActive(language)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="language.active", value=0, ng-change="setLangActive(language)")
+						| #{__('No')}
+					td
+						input(type='radio', ng-model="language.by_default", value=1, ng-change="setLangDefault(language)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="language.by_default", value=0, ng-change="setLangDefault(language)")
+						| #{__('No')}
+			
+			a(class="sortorder", ng-class="{reverse: showAddLangForm == false}", ng-click="toggleAddLangForm()") #{__('Add a new language')}
+			div(ng-show="showAddLangForm")
+				form(name="AddLangForm", ng-submit="AddLangForm.$valid && addLanguage()")
+					p #{__("New language name")}
+					input(class="form-control" type="text", ng-model="newLanguage.name", required)
+					p #{__("Language Code, must be unique ( ex: 'en' for English)")}
+					input(class="form-control" type="text", ng-model="newLanguage.code", placeholder="ex: EN", required)
+					br
+					input(class="btn btn-default" type="submit", value="#{__('Add Language')}")
+			
+		div(class="config_section")
+			h3 #{__('Currencies')}
+			table(class="table table-hover table-condensed table-striped table-bordered")
+				thead
+					tr
+						td #{__("Currency")}
+						td #{__("Active")}
+						td #{__("Default")}
+						td #{__("What you get for one dollar")} :
+						
+				tr(ng-repeat='currency in currency_list | orderBy:name')
+							
+					td 
+						b {{currency.symbol}} 
+						| {{currency.name}}
+					td
+						input(type='radio', ng-model="currency.active", value=1, ng-change="setActive(currency.code, currency.active)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="currency.active", value=0, ng-change="setActive(currency.code, currency.active)")
+						| #{__('No')}
+					td(ng-show="currency.active")
+						input(type='radio', ng-model="currency.by_default", value=1, ng-change="setCurrencyDefault(currency)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="currency.by_default", value=0, ng-change="setCurrencyDefault(currency)")
+						| #{__('No')}
+					td(class="form-inline" ng-show="currency.active && currency.code != 'USD'")
+						input(class="form-control" type='number', step="any", ng-model="currency.foronedollar")
+						button(class="btn btn-default" ng-click="setCurrencyRate(currency)") #{__("Save")}
+			
+			a(class="sortorder", ng-class="{reverse: showAddCurrencyForm == false}", ng-click="toggleAddCurrencyForm()") #{__('Add a new currency')}
+			div(ng-show="showAddCurrencyForm")
+				form(class="form-horizontal" name="AddCurrencyForm", ng-submit="AddCurrencyForm.$valid && addCurrency()")
+					div(class="form-group")
+						label(class="col-sm-3 control-label") #{__('Currency Name')}
+						div(class="col-sm-8")
+							input(class="form-control" ng-model="newcurrency.name", type="text", required, placeholder="#{__('Currency name')}")
+					
+					div(class="form-group")
+						label(class="col-sm-3 control-label") #{__('Currency Code')}
+						div(class="col-sm-8")
+							input(class="form-control" ng-model="newcurrency.code", type="text", required, placeholder="#{__('Currency code')}, (ex: 'USD')")
+					
+					div(class="form-group")
+						label(class="col-sm-3 control-label") #{__('Currency symbol')}
+						div(class="col-sm-8")
+							input(class="form-control" ng-model="newcurrency.symbol", type="text", required, placeholder="#{__('Currency symbol')}, (ex: '$')")
+					
+					
+					div(class="col-sm-offset-3")
+						input(class="btn btn-default" type="submit", value="#{__('Add Currency')}")
+						
+		ul(class="config_section")
+			h3 #{__('Sectors')}
+			table(class="table table-hover table-condensed table-striped table-bordered")
+				thead
+					tr
+						td(ng-repeat='language in list_languages') {{language.translated_name}}
+				tr(ng-repeat='sector in sector_list')
+					td(ng-repeat='language in list_languages') {{displayName(sector.name, language)}}
+									
+			a(class="sortorder", ng-class="{reverse: showAddSectForm == false}", ng-click="toggleAddSectForm()") #{__('Add a new sector')}
+			div(ng-show="showAddSectForm")
+				form(name="AddSectForm", ng-submit="AddSectForm.$valid && addSector()")
+					table
+						tr(ng-repeat="language in list_languages")
+							
+							td #{__('Sector name in')} {{language.translated_name}}
+							td
+								input(type="text", ng-model="newSector.names[language._id]", required)
+							
+					input(class="btn btn-default" type="submit", value="#{__('Add Sector')}")
+		
+		div(class="config_section")
+			h3 #{__('Taxes')}
+			table(class="table table-hover table-condensed table-bordered")
+				thead
+					tr
+						td #{__('Taxe name')}
+						td #{__("Taxe percentage")}
+						td #{__("Default")}
+						td #{__("Applied on rooms")}
+						
+				tr(ng-repeat="taxe in taxes_list")
+					td {{taxe.name}}
+					td {{taxe.percentage}} %
+					td
+						input(type='radio', ng-model="taxe.by_default", value=1, ng-change="setTaxeDefault(taxe)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="taxe.by_default", value=0, ng-change="setTaxeDefault(taxe)")
+						| #{__('No')}
+					td
+						input(type='radio', ng-model="taxe.on_rooms", value=1, ng-change="setTaxeOnRooms(taxe)")
+						| #{__('Yes')}
+						input(type='radio', ng-model="taxe.on_rooms", value=0, ng-change="setTaxeOnRooms(taxe)")
+						| #{__('No')}
+					
+			a(class="sortorder", ng-class="{reverse: showAddTaxForm == false}", ng-click="toggleAddTaxForm()") #{__('Add a new taxe')}
+			div(ng-show="showAddTaxForm")
+				form(class="form-horizontal" name="AddTaxForm", ng-submit="AddTaxForm.$valid && addTaxe()")
+					div(class="form-group")
+						label(class="col-sm-3 control-label") #{__('Taxe Name')}
+						div(class="col-sm-8")
+							input(class="form-control" ng-model="newtax.name", type="text", required, placeholder="#{__('Taxe name')}")
+					
+					div(class="form-group")
+						label(class="col-sm-3 control-label") #{__('Taxe percentage')}
+						div(class="col-sm-8")
+							div(class="input-group")
+								div(class="input-group-addon") %
+								input(class="form-control" ng-model="newtax.percentage", type="number", required, placeholder="#{__('Taxe percentage')}")
+					div(class="col-sm-offset-3")
+						input(class="btn btn-default" type="submit", value="#{__('Add Taxe')}")
+			
+		div(class="config_section")
+			h3 #{__('Personalization')}
+			
+			h4 #{__("Upload a new logo")}
+			form(name="uploadForm", ng-submit="uploadForm.$valid && submitLogo()")
+				button(class="btn btn-default" ngf-select ng-model="logoFile" name="logoFile" ngf-pattern="'.jpg, .JPG, .jpeg, .JPEG'" ngf-accept="'image/*'" ngf-max-size="20MB" ngf-min-height="100" ngf-resize="{height: 250}", required) #{__("Select file")}
+				span  * #{__("The file must be a jpeg file")}
+				br
+				img(ngf-thumbnail="logoFile")
+				br
+				button(class="btn btn-default" type="submit", ng-show="uploadForm.$valid") #{__("Submit logo")}
+			hr
+			h4 #{__("Color for links")}
+			div(class="colorsetcontainer")
+				input(id='input',class='color', data-color='linkscolor', value='#FFFFFF') 
+			input(type='hidden', id='linkscolor')
+			
+			button(class="btn btn-default" ng-click="updateColors()") #{__("Save")}
+
+	script(type="text/javascript", src='/javascripts/src/ng-file-upload-shim.min.js')
+	script(type="text/javascript", src='/javascripts/src/ng-file-upload.min.js')
+	script(type="text/javascript", src='/javascripts/controllers/config_controller.js')
+	script(type="text/javascript", src='/javascripts/src/color-script.js')
+	

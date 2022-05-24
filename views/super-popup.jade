@@ -1,0 +1,13 @@
+// super popup to ask confirmation before any action
+// cancelSuperPopup() is called when client press on cancel
+// popupAction is the html displayed as confirmation validation
+// superpopup_message is the message displayed
+
+div(id="superpopup", class='popupform', ng-show="show_super_popup")
+	div(class='background', ng-click="cancelSuperPopup()")
+	div(class='lightbox')
+		p {{superpopup_message}}
+		
+		button(class="pull-left", ng-click="cancelSuperPopup()") #{__("Cancel")}
+		span(ng-html-compile="popupAction")
+		

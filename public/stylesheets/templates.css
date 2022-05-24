@@ -1,0 +1,41 @@
+#logo
+{
+width:70px;
+}
+.pull-right
+{
+float:right;
+}
+.clearfix{
+clear: both;
+}
+table
+{
+margin-top:50px;
+margin-left:auto;
+margin-right:auto;
+border-collapse: collapse;
+}
+ul
+{
+list-style: none;
+}
+td
+{
+border: 1px solid black;
+padding:5px;
+}
+thead
+{
+font-style: italic;
+}
+.price, .header
+{
+font-weight: bold;
+}
+
+@media print {
+  a[href]:after {
+    content: none;
+  }
+}

@@ -1,0 +1,38 @@
+extends layout
+
+block content
+	div(ng-app="products", i18n-locale=i18n.getLocale(), ng-controller="ProductsController")
+		include ./tools/loading-page.jade
+		
+		if (session.rights.product_can_delete || session.rights.is_superuser)
+			include ./tools/deleteSwitch.jade	
+		if (session.rights.product_can_change || session.rights.is_superuser)
+			include ./tools/changeSwitch.jade	
+		include ./tools/notification.jade
+		include ./tools/super-popup.jade
+		
+		ul(class="nav nav-pills")
+			li(ng-repeat="sector in sector_list", ng-show="hasSectorAccess(sector)", ng-class="{active: sector_actif._id == sector._id}")
+				a(href ng-click="setActive(sector)") {{displayContent(sector.name)}}
+			div(class="clearfix")
+		div(class="clearfix")
+		
+		include ./products/categList.jade
+		
+		if (session.rights.product_can_add || session.rights.is_superuser)
+			include ./products/productForm.jade
+			include ./products/categoryForm.jade
+		
+		include ./products/productList.jade
+		
+		if (session.rights.product_can_add || session.rights.product_can_change || session.rights.is_superuser)
+			include ./products/materialForm.jade
+		
+		include ./products/inventory.jade
+		
+		button(ng-click="showPriceList()", class="btn btn-default", ng-show="sector_actif") #{__("Print price list")}
+		
+		include ./products/pricesList.jade
+
+		
+	script(type="text/javascript", src='/javascripts/controllers/products.js')

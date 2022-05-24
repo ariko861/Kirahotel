@@ -1,0 +1,46 @@
+div(id='ReservationInfo', class='popupform', ng-show="showResInfo == true" )
+	div(class='background', ng-click="cancelShowResInfo()")
+	div(class='lightbox')
+		div(class="pull-left")
+			
+			p #{__("Begin date")} : 
+				span {{selectedRes.begin | date: "dd-MM-yyyy"}}
+			
+			p #{__("End date")} : 
+				span {{selectedRes.end | date: "dd-MM-yyyy"}}
+			
+			p #{__("Length of stay")} : 
+				span {{selectedRes.nights}} #{__("nights")}
+			
+			p #{__("Room")} : {{selectedRes.room.room_name}} 
+			
+			p #{__("Approximative arrival time")} : 
+				span {{selectedRes.arrival_time.hours}} : {{selectedRes.arrival_time.minutes}}
+				
+			p(class="pull-left") #{__("Client")} : 
+				span {{selectedRes.client.full_name}}
+					
+			div(class="clearfix")
+			p #{__("Currency")} :
+				span {{selectedRes.currency_code}}
+				
+		ul(class="pull-right")
+			div(class="action_icon")
+				div(ng-show="rights.reservation_can_change")
+					p(ng-click="askDelete()", class="link")
+						img(class='icon', src='/images/delete_icon.png') 
+						span #{__("Delete reservation")}
+				div(ng-show="rights.reservation_can_delete")
+					p(ng-click="editReservation(selectedRes)", class="link")
+						img(class="icon", src='/images/edit_icon.png') 
+						span #{__("Change Reservation")}
+		
+			h4 #{__('Price for the total of the stay')} :
+			li
+				p: b {{selectedRes.net}} {{default_currency.symbol}}
+			li(ng-repeat="currency in list_currencies") 
+				p(class="pull-right") {{currency.name}} : {{(selectedRes.net/default_currency.foronedollar)*currency.foronedollar | number:2}} {{currency.symbol}}
+				div(class="clearfix")
+				
+		div(class="clearfix")
+

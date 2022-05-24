@@ -1,0 +1,106 @@
+extends layout
+
+block content
+	div(ng-app="sales", i18n-locale=i18n.getLocale(), ng-controller="SalesController")
+		
+		include ./tools/loading-page.jade
+		include ./tools/notification
+		include ./tools/super-popup.jade
+		include ./clients/attachtoinvoice.jade
+		include ./invoices/printingForm.jade
+		include ./invoices/paymentForm.jade
+		
+		
+		if (session.rights && session.rights.can_make_discount)
+			include ./invoices/discountForm.jade
+		
+		if (session.rights && session.rights.client_can_add)
+			include clientForm.jade
+		
+		
+		// popup to select sector
+		div(id="selectSector", class="popupform", ng-hide="sector_actif")
+			div(class='background')
+			div(class='lightbox')
+				h3 #{__("Choose sector")} :
+				ul
+					li(class="link", ng-repeat="sector in list_sectors", ng-show="hasSectorAccess(sector)", ng-click="selectSector(sector)") {{displayContent(sector.name)}}
+				
+				a(class="link", ng-click="sector_actif = {}") #{__("Cancel")}
+		div(class="form-inline" id="quantity-select")
+			span #{__("Quantity")} : 
+			input(class="form-control" type="number", ng-model="quantity", step=1, focus="{{quantFocus}}" autofocus)
+		
+		
+		div(class="col-md-6 margin-bottom")
+			h3 {{displayContent(sector_actif.name)}}
+			
+			include ./products/categList.jade		
+			
+			include ./products/productList.jade
+		
+		
+		div(class="col-md-6")
+			ul(class="nav nav-tabs")
+				li(ng-click="invoice_selected = 'new'; newinvFocus = !newinvFocus", ng-class="{ active: invoice_selected == 'new' }")
+					a #{__("New invoice")}
+				li(ng-repeat="invoice in openinvoices_list", ng-click="selectInv(invoice)", ng-class="{ active: invoice._id == invoice_selected._id }")
+					a {{invoice.id_number}}
+					
+			form(ng-show="invoice_selected == 'new'", name="newInvoiceForm", ng-submit="newInvoiceForm.$valid && addInvoice()")
+				div(class="form-group")
+				label(for="newInvoiceName") #{__("ID or name for the new invoice")}
+				br
+				input(id="newInvoiceName", class="form-control" type="text", pattern=".{3,}", focus="{{newinvFocus}}", ng-model="newInvoice.id_number", required)
+				br
+				input(class="btn btn-default btn-lg" type="submit", ng-show="newInvoiceForm.$valid" value="#{__('Add invoice')}")
+					
+					
+			div(ng-repeat="invoice in openinvoices_list", ng-show="invoice._id == invoice_selected._id")
+				div(class="invoiceoptions")
+					button(class="btn btn-default" ng-click="attachtoclient()")
+						img(src="/images/person-6x.png")
+					button(class="btn btn-default" ng-click="startPrintForm()")
+						img(src="/images/print-6x.png")
+					if (session.rights && ( session.rights.can_make_discount || session.rights.is_superuser))
+						button(class="btn btn-default" ng-click="startDiscountForm()")
+							img(src="/images/tag-6x.png")
+					button(class="btn btn-warning" ng-click="activeDeleting()", title="#{__('allow to delete item')}")
+						img(src="/images/glyphicons-17-bin.png")
+					if (session.rights && ( session.rights.can_make_discount || session.rights.is_superuser))
+						button(class="btn btn-danger pull-right", ng-click="askInvoiceDelete()", title="#{__('Delete this invoice')}")
+							img(src="/images/x-6x.png")
+					
+					
+						
+				div(ng-if="invoice.client")
+					p
+						b #{__("Client")} : 
+						span {{invoice.client.full_name}}
+				table(class="table table-condensed table-bordered")
+					thead
+						tr
+							td #{__("Quantity")}
+							td #{__("Designation")}
+							td #{__("Price")}
+							td #{__("Total")}
+					tr(ng-repeat="item in invoice.items", ng-click="selectItem(item)", ng-class="{ deleteon: deletionActive }")
+						td {{item.quantity}}
+						td {{displayContent(item.designation)}}
+						td(class="price") {{item.price | number:2}}
+						td(class="price") {{item.price * item.quantity | number:2}}
+					
+					tr(ng-if="invoice.discount", ng-click="selectDiscount()", ng-class="{ deleteon: deletionActive }")
+						td(colspan=3) #{__("Discount")} {{invoice.discount.percent}} %
+						td(class="price") {{invoice.discount.amount | number:2}} {{default_currency.symbol}}
+					
+					tr
+						td(colspan=3)
+						td(class="price") {{invoice.net | number:2}} {{default_currency.symbol}}
+				
+				button(class="btn btn-primary" ng-if="invoice.items.length > 0", ng-click="startPayment()") #{__("Pay")}
+						
+			
+									
+
+	script(type="text/javascript", src='/javascripts/controllers/sales.js')

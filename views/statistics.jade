@@ -1,0 +1,187 @@
+extends layout
+
+block content
+	- var nofilter = __("No filter");
+	div(ng-app="stats", ng-controller="StatsController")
+		
+		include ./tools/loading-page.jade
+		include ./tools/notification.jade
+		
+		form(class="form-inline" name="statsOnDates", ng-submit="statsOnDates.$valid && getStats()")
+			p
+				| #{__('Display statistics from ')}
+				input(class="form-control" type="date", ng-model="datebegin", class="datepicker1", datepicker, required)
+				| #{__(' to ')}
+				input(class="form-control" type="date", ng-model="dateend", class="datepicker2", datepicker, required)
+				|  
+				input(class="btn btn-default" type="submit", value="Submit")
+		
+		ul(class="nav nav-tabs")
+			li(ng-click="menu_selected = 'payments'", ng-class="{selected: menu_selected == 'payments'}")
+				a #{__("Payments")} 
+					span(class="badge") {{filteredPayments.length}}
+			li(ng-click="menu_selected = 'reservations'", ng-class="{selected: menu_selected == 'reservations'}")
+				a #{__("Reservations")} 
+					span(class="badge") {{filteredReservations.length}}
+			li(ng-click="menu_selected = 'invoices'", ng-class="{selected: menu_selected == 'invoices'}")
+				a #{__("Invoices")} 
+					span(class="badge") {{filteredInvoices.length}}
+		div(class="clearfix")
+		
+		div(ng-show="menu_selected == 'payments'")
+			
+			div(class="form-inline")
+				label(class="control-label") #{__("Filter by payment way")}
+				select(class="form-control", ng-model="payments.filter.way")
+					option(value="", selected) #{nofilter}
+					option(value="cb") #{__("Credit card")}
+					option(calue="cash") #{__("Cash")}
+			
+			div(class="form-inline")
+				label(class="control-label") #{__("Filter by username")}
+				input(type="text", class="form-control", ng-model="payments.filter.user")
+					
+			br
+			p {{filteredPayments.length}} #{__("Transactions found")}
+			p #{__("Total for the selected payments")} :
+				span(class="price") {{getTotalPayments() | number:2}}
+			
+			
+			
+			table(class='table table-condensed table-striped table-hover')
+				thead
+					tr
+						td
+							a(href, ng-click="order('amount')") #{__('Amount')}
+							span(class="sortorder" ng-show="predicate === 'amount'" ng-class="{reverse:reverse}")
+							
+						td 
+							a(href, ng-click="order('way')") #{__('Payment way')}
+							span(class="sortorder" ng-show="predicate === 'way'" ng-class="{reverse:reverse}")
+							
+						td
+							a(href, ng-click="order('user')") #{__('User')}
+							span(class="sortorder" ng-show="predicate === 'user'" ng-class="{reverse:reverse}")
+						td
+							a(href, ng-click="order('date')") #{__('Date')}
+							span(class="sortorder" ng-show="predicate === 'date'" ng-class="{reverse:reverse}")
+							
+						td
+							a #{__('Invoice ID')}
+						td
+						
+				tr(ng-repeat="payment in ( filteredPayments = ( list_payments | orderBy:predicate:reverse | filter:payments.filter ))")
+					td(class="price") {{payment.amount | number:2}}
+					td {{payment.way}}
+					td {{payment.user}}
+					td {{payment.date | date}}
+					td: span(ng-repeat="ref in payment.reference")
+						a(ng-if="ref.invoice_type == 'invoice'" href, print-invoice='ref.invoice_ref', language='session.user_language || default_language._id', currency='default_currency._id') {{ref.invoice_ref}}
+						a(ng-if="ref.invoice_type == 'reservation'" href, print-reservation='ref.invoice_ref', language='session.user_language || default_language._id', currency='default_currency._id') {{ref.invoice_ref}}
+						span(ng-hide="$last") , 
+					td: img(class='icon', src='/images/glyphicons-53-eye-close.png', ng-click="hidePayment(payment)")
+		div(ng-show="menu_selected == 'reservations'")
+			
+			br
+			p {{filteredReservations.length}} #{__("Reservations found")}
+			p #{__("Total for the selected reservations")} :
+				span(class="price") {{getTotalReservations() | number:2}}
+			
+			table(class='table table-condensed table-striped table-hover')
+				thead
+					tr
+						td
+							a(href, ng-click="order('begin')") #{__('Arrival')}
+							span(class="sortorder" ng-show="predicate === 'begin'" ng-class="{reverse:reverse}")
+							
+						td 
+							a(href, ng-click="order('end')") #{__('Departure')}
+							span(class="sortorder" ng-show="predicate === 'end'" ng-class="{reverse:reverse}")
+							
+						td
+							a(href, ng-click="order('status')") #{__('Statut')}
+							span(class="sortorder" ng-show="predicate === 'status'" ng-class="{reverse:reverse}")
+						td
+							a(href, ng-click="order('client.full_name')") #{__('Customer')}
+							span(class="sortorder" ng-show="predicate === 'client.full_name'" ng-class="{reverse:reverse}")
+						
+						td
+							a(href, ng-click="order('room.room_name')") #{__('Room')}
+							span(class="sortorder" ng-show="predicate === 'room.room_name'" ng-class="{reverse:reverse}")
+						
+						td
+							a(href, ng-click="order('total_price')") #{__('Total')}
+							span(class="sortorder" ng-show="predicate === 'total_price'" ng-class="{reverse:reverse}")
+						td
+							a #{__('Invoice ID')}
+						td
+				tr(ng-repeat="reservation in ( filteredReservations = ( list_reservations | orderBy:predicate:reverse ))")
+					td {{reservation.begin | date}}
+					td {{reservation.end | date}}
+					td {{reservation.status}}
+					td {{reservation.client.full_name}}
+					td {{reservation.room.room_name}}
+					td(class="price") {{reservation.net | number:2}}
+					td: a(href print-reservation="reservation._id", language='session.user_language || default_language._id', currency='default_currency._id') {{reservation._id}}		
+					td: img(class='icon', src='/images/glyphicons-53-eye-close.png', ng-click="hideReservation(reservation)")
+		div(ng-show="menu_selected == 'invoices'")
+			
+			div(class="form-inline")
+				label(class="control-label") #{__("Filter by sector")}
+				select(class="form-control", ng-model="invoices.filter.sector._id")
+					option(value="", selected) #{nofilter}
+					option(ng-repeat="sector in list_sectors" value="{{sector._id}}") {{displayContent(sector.name)}}
+					
+			br
+			p {{filteredInvoices.length}} #{__("Invoices found")}
+			p #{__("Total for the selected invoices")} :
+				span(class="price") {{getTotalInvoices() | number:2}}
+			
+			
+			table(class='table table-condensed table-striped table-hover')
+				thead
+					tr
+						td
+							a(href, ng-click="order('date')") #{__('Date')}
+							span(class="sortorder" ng-show="predicate === 'date'" ng-class="{reverse:reverse}")
+							
+						td 
+							a(href, ng-click="order('status')") #{__('Status')}
+							span(class="sortorder" ng-show="predicate === 'status'" ng-class="{reverse:reverse}")
+							
+						td
+							a(href, ng-click="order('sector._id')") #{__('Sector')}
+							span(class="sortorder" ng-show="predicate === 'sector._id'" ng-class="{reverse:reverse}")
+						td
+							a(href, ng-click="order('client.full_name')") #{__('Customer')}
+							span(class="sortorder" ng-show="predicate === 'client.full_name'" ng-class="{reverse:reverse}")
+						
+						td
+							a(href, ng-click="order('net')") #{__('Net total')}
+							span(class="sortorder" ng-show="predicate === 'net'" ng-class="{reverse:reverse}")
+						td
+							a #{__('Invoice ID')}
+						td
+						
+				tr(ng-repeat="invoice in ( filteredInvoices = ( list_invoices | orderBy:predicate:reverse | filter:invoices.filter ))")
+					td {{invoice.date | date}}
+					td {{invoice.status}}
+					td {{displayContent(invoice.sector.name)}}
+					td {{invoice.client.full_name}}
+					td(class="price") {{invoice.net | number:2}}
+					td: a(href print-invoice="invoice._id", language='session.user_language || default_language._id', currency='default_currency._id') {{invoice._id}}
+					td: img(class='icon', src='/images/glyphicons-53-eye-close.png', ng-click="hideInvoice(invoice)")
+
+	script(type="text/javascript", src='/javascripts/controllers/stats.js')
+
+	script.
+		$(function() {
+			
+			$(".datepicker1").change(function() {
+				var beginningDate = $(this).datepicker( "getDate" );
+				var newbeginningDate = addDays( beginningDate, 1);
+				console.log(newbeginningDate)
+				$(".datepicker2").datepicker( "option", "minDate", newbeginningDate );
+				
+			});
+		});
